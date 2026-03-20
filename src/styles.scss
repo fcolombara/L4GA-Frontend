@@ -1,0 +1,139 @@
+@use "sass:color";
+
+// --- VARIABLES DE MARCA ---
+$verde-principal: #0D2A1B;
+$amarillo-principal: #FFC600;
+$blanco: #ffffff;
+$negro: #1a1a1a;
+
+// --- CONFIGURACIÓN GLOBAL ---
+body {
+  background-color: #f4f7f6;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  overflow: auto !important;
+  padding-right: 0 !important;
+  padding-top: 85px !important;
+
+  &.modal-open {
+    overflow: auto !important;
+  }
+}
+
+@media (max-width: 991px) {
+  body {
+    padding-top: 75px !important;
+  }
+}
+
+// --- COMPONENTES PERSONALIZADOS ---
+
+.navbar-custom {
+  background-color: $verde-principal !important;
+  border-bottom: 4px solid $amarillo-principal;
+  z-index: 1030;
+
+  .nav-link {
+    color: $blanco !important;
+    transition: 0.3s;
+
+    &:hover {
+      color: $amarillo-principal !important;
+    }
+
+    &.active {
+      color: $amarillo-principal !important;
+      font-weight: bold;
+      border-bottom: 2px solid $amarillo-principal;
+    }
+  }
+
+  .navbar-toggler {
+    border: none;
+
+    &:focus {
+      box-shadow: none;
+    }
+  }
+}
+
+// Botón Principal (Verde) - CORREGIDO
+.btn-primary-custom {
+  background-color: $verde-principal !important;
+  border-color: $verde-principal !important;
+  color: $blanco !important;
+
+  &:hover {
+    // Reemplazo de lighten
+    background-color: color.adjust($verde-principal, $lightness: 10%) !important;
+  }
+}
+
+// Botón de Acción/Resaltado (Amarillo) - CORREGIDO
+.btn-action-custom {
+  background-color: $amarillo-principal !important;
+  border-color: $amarillo-principal !important;
+  color: $verde-principal !important;
+  font-weight: bold;
+
+  &:hover {
+    // Reemplazo de darken
+    background-color: color.adjust($amarillo-principal, $lightness: -5%) !important;
+    color: $negro !important;
+  }
+}
+
+.thead-custom {
+  background-color: $verde-principal !important;
+  color: $amarillo-principal !important;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+}
+
+// --- LIMPIEZA DE CAPAS ---
+.modal-backdrop {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+.container {
+  position: relative;
+  z-index: 1;
+}
+
+// --- ELIMINAR CELESTES ---
+
+a {
+  color: $verde-principal !important;
+  text-decoration: none;
+
+  &:hover {
+    // Reemplazo de lighten
+    color: color.adjust($verde-principal, $lightness: 15%) !important;
+    text-decoration: underline;
+  }
+}
+
+.form-control:focus, .form-select:focus, .form-check-input:focus {
+  border-color: $amarillo-principal !important;
+  box-shadow: 0 0 0 0.25rem rgba(255, 198, 0, 0.25) !important;
+}
+
+.form-check-input:checked {
+  background-color: $verde-principal !important;
+  border-color: $verde-principal !important;
+}
+
+.table-hover tbody tr:hover {
+  background-color: rgba(13, 42, 27, 0.05) !important;
+}
+
+.btn-outline-primary, .btn-info {
+  border-color: $verde-principal !important;
+  color: $verde-principal !important;
+
+  &:hover {
+    background-color: $verde-principal !important;
+    color: $amarillo-principal !important;
+  }
+}

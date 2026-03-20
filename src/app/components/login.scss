@@ -1,0 +1,33 @@
+.login-page-bg {
+  background-color: #05140d; // Un verde casi negro para el fondo de pantalla
+}
+
+.form-control {
+  color: white !important;
+  &::placeholder {
+    color: rgba(255, 255, 255, 0.5) !important;
+  }
+  &:focus {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+    border: 1px solid #FFC600 !important;
+    box-shadow: none !important;
+  }
+}
+
+.btn-login-custom {
+  background-color: #FFC600;
+  color: #0D2A1B;
+  border: none;
+  transition: all 0.3s ease;
+  
+  &:hover:not(:disabled) {
+    background-color: #ffffff !important; // Cambia a blanco al pasar el mouse
+    color: #0D2A1B;
+    transform: scale(1.02);
+  }
+  
+  &:disabled {
+    background-color: #555 !important;
+    color: #888;
+  }
+}

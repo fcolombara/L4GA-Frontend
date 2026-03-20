@@ -1,0 +1,67 @@
+<div class="login-page-bg d-flex justify-content-center align-items-center vh-100">
+
+  <div class="card shadow-lg p-4 animate__animated animate__fadeIn"
+       style="width: 100%; max-width: 400px; border-radius: 15px; border-top: 5px solid #FFC600;">
+
+    <div class="text-center mb-4">
+      <h2 class="fw-extrabold mb-0" style="color: #0D2A1B; letter-spacing: -1px;">L4GA</h2>
+      <p class="small fw-bold text-muted mt-0">LOS CUATRO GLOBAL AGRO S.A.</p>
+      <hr style="border-color: #FFC600; opacity: 1; width: 50px; margin: 10px auto;">
+    </div>
+
+    <div *ngIf="errorMessage"
+         class="alert alert-danger d-flex align-items-center mb-3 animate__animated animate__shakeX"
+         role="alert"
+         style="border-radius: 8px; font-size: 0.85rem;">
+      <i class="bi bi-exclamation-triangle-fill me-2"></i>
+      <div>
+        {{ errorMessage }}
+      </div>
+    </div>
+
+    <form (ngSubmit)="onLogin()">
+
+      <div class="mb-3">
+        <label class="form-label text-dark small fw-bold">Email</label>
+        <div class="input-group">
+          <span class="input-group-text bg-light border-end-0">
+            <i class="bi bi-envelope" style="color: #0D2A1B;"></i>
+          </span>
+          <input type="email"
+                 name="email"
+                 [(ngModel)]="loginData.email"
+                 class="form-control border-start-0 bg-light"
+                 placeholder="ejemplo@correo.com"
+                 required>
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <label class="form-label text-dark small fw-bold">Contraseña</label>
+        <div class="input-group">
+          <span class="input-group-text bg-light border-end-0">
+            <i class="bi bi-lock" style="color: #0D2A1B;"></i>
+          </span>
+          <input type="password"
+                 name="password"
+                 [(ngModel)]="loginData.password"
+                 class="form-control border-start-0 bg-light"
+                 placeholder="••••••••"
+                 required>
+        </div>
+      </div>
+
+      <button type="submit"
+              class="btn w-100 py-2 fw-bold shadow-sm text-uppercase"
+              style="border-radius: 8px; background-color: #FFC600; color: #0D2A1B; border: none;"
+              [disabled]="!loginData.email || !loginData.password">
+        Ingresar al Sistema
+      </button>
+
+    </form>
+
+    <div class="mt-4 text-center">
+      <small class="text-muted fw-bold">© 2026 L4GA Software Solutions</small>
+    </div>
+  </div>
+</div>
