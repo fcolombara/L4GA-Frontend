@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+// 1. Aseguramos que la importación sea correcta
+import { environment } from '../../environments/environment';
 
-// ESTO ES LO QUE EL DASHBOARD NO VEÍA:
 export interface Transporte {
   id?: number;
   chofer: string;
@@ -16,7 +17,8 @@ export interface Transporte {
   providedIn: 'root'
 })
 export class TransporteService {
-  private apiUrl = 'https://localhost:7048/api/Transporte';
+  // 2. CAMBIO CLAVE: Reemplazamos el localhost por la variable de entorno
+  private apiUrl = `${environment.apiUrl}/Transporte`;
 
   constructor(private http: HttpClient) { }
 

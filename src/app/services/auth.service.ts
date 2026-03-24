@@ -8,32 +8,34 @@ import { environment } from '../../environments/environment';
   providedIn: 'root'
 })
 export class AuthService {
-  private readonly apiUrl = environment.apiUrl;
+  // Definimos la ruta base del controlador de usuarios
+  private readonly endpoint = `${environment.apiUrl}/Usuarios`;
 
   constructor(private http: HttpClient) { }
 
   login(credentials: any): Observable<AuthResponse> {
-    // Agregamos /Usuarios/ antes de login para que coincida con el Backend
-    return this.http.post<AuthResponse>(`${this.apiUrl}/Usuarios/login`, credentials);
+    // Apunta a: .../api/Usuarios/login
+    return this.http.post<AuthResponse>(`${this.endpoint}/login`, credentials);
   }
 
   registrar(usuario: any): Observable<any> {
-    return this.http.post<any>(this.apiUrl, usuario);
+    // Apunta a: .../api/Usuarios
+    return this.http.post<any>(this.endpoint, usuario);
   }
 
   getUsuarios(): Observable<any[]> {
-    // Agregamos /Usuarios al final de la ruta base
-    return this.http.get<any[]>(`${this.apiUrl}/Usuarios`);
+    // Apunta a: .../api/Usuarios
+    return this.http.get<any[]>(this.endpoint);
   }
 
   actualizarRol(id: number, nuevoRol: string): Observable<any> {
     const body = { nuevoRol: nuevoRol };
-    return this.http.put<any>(`${this.apiUrl}/actualizar-rol/${id}`, body);
+    // Corregido: Agregamos /Usuarios/ antes de la acción
+    return this.http.put<any>(`${this.endpoint}/actualizar-rol/${id}`, body);
   }
 
-  // --- NUEVO MÉTODO AGREGADO ---
-  // Permite al Admin eliminar un usuario por su ID
   eliminarUsuario(id: number): Observable<any> {
-    return this.http.delete<any>(`${this.apiUrl}/${id}`);
+    // Corregido: Agregamos /Usuarios/ antes del ID
+    return this.http.delete<any>(`${this.endpoint}/${id}`);
   }
 }
