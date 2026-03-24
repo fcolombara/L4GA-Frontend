@@ -9,7 +9,7 @@ import { environment } from '../../environments/environment';
 })
 export class NominaService {
   // AJUSTE CLAVE: Agregamos /Nominas (o como se llame tu controller en C#)
-  private readonly apiUrl = `${environment.apiUrl}/Nominas`;
+  private readonly apiUrl = `${environment.apiUrl}/Nomina`;
 
   constructor(private http: HttpClient) { }
 
