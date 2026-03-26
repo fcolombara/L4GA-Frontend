@@ -5,5 +5,6 @@ export interface Transporte {
   cisterna: string;
   anioTracto?: string;
   anioCisterna?: string;
-  linkTracking?: string; // Lo agregamos aquí para que ya quede listo
+  contacto?: string;
+  linkTracking?: string; // Ya lo dejamos listo como pediste
 }

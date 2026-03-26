@@ -33,4 +33,7 @@ export class TransporteService {
   eliminarTransporte(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
+  actualizarTransporte(id: number, transporte: Transporte): Observable<Transporte> {
+    return this.http.put<Transporte>(`${this.apiUrl}/${id}`, transporte);
+  }
 }

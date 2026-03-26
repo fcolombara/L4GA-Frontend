@@ -2,10 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
-import { TransporteService, Transporte } from '../services/transporte';
+import { TransporteService } from '../services/transporte';
 import { NominaService } from '../services/nomina.service';
 import { Nomina, NominaCreateDto } from '../models/nomina.model';
 import { FormsModule } from '@angular/forms';
+import { Transporte } from '../models/transporte.model';
 
 
 // Librerías para PDF
@@ -65,8 +66,8 @@ import autoTable from 'jspdf-autotable';
     <div class="container mt-5 pt-5 pb-5">
       <div *ngIf="seccionActiva === 'inicio'" class="animate__animated animate__fadeIn">
         <div class="jumbotron bg-white p-5 rounded shadow-sm border text-center">
-          <h1 class="display-4 text-primary fw-bold">¡Hola, {{ usuarioNombre }}!</h1>
-          <p class="lead text-muted">Bienvenido al sistema de gestión logística de L4GA.</p>
+          <h1 class="display-4 text-primary fw-bold">Bienvenido al sistema de gestión logística de L4GA.</h1>
+          <p class="lead text-muted">¡Hola, {{ usuarioNombre }}!</p>
           <hr class="my-4">
           <div class="row g-4 justify-content-center">
             <div class="col-md-3" (click)="seccionActiva = 'nominas'" style="cursor: pointer">
@@ -93,89 +94,135 @@ import autoTable from 'jspdf-autotable';
       </div>
 
       <div *ngIf="seccionActiva === 'nominas'" class="animate__animated animate__fadeIn">
-        <div class="d-flex align-items-center justify-content-between mb-3">
-          <h3 class="fw-bold mb-0 text-dark"><i class="bi bi-file-earmark-text"></i> Nóminas</h3>
-          <div class="btn-group shadow-sm">
-            <button class="btn btn-danger" (click)="exportarNominasPDF()"><i class="bi bi-file-pdf"></i> PDF</button>
-            <button *ngIf="usuarioRol.toLowerCase() === 'admin' || usuarioRol.toLowerCase() === 'operario'" 
-                    type="button" class="btn btn-action-custom" (click)="mostrarFormNomina = !mostrarFormNomina">
-              {{ mostrarFormNomina ? '✖ Cancelar' : '➕ Nueva' }}
-            </button>
-          </div>
-        </div>
+  <div class="d-flex align-items-center justify-content-between mb-3">
+    <h3 class="fw-bold mb-0 text-dark"><i class="bi bi-file-earmark-text"></i> Nóminas</h3>
+    <div class="btn-group shadow-sm">
+      <button class="btn btn-danger" (click)="exportarNominasPDF()"><i class="bi bi-file-pdf"></i> PDF</button>
+      <button *ngIf="usuarioRol.toLowerCase() === 'admin' || usuarioRol.toLowerCase() === 'operario'"
+              type="button" class="btn btn-action-custom" (click)="mostrarFormNomina = !mostrarFormNomina">
+        {{ mostrarFormNomina ? '✖ Cancelar' : '➕ Nueva' }}
+      </button>
+    </div>
+  </div>
 
-        <div *ngIf="mostrarFormNomina" class="card border-dark mb-4 shadow-sm animate__animated animate__fadeIn">
-          <div class="card-body bg-light">
-            <h5 class="fw-bold text-dark mb-3"><i class="bi bi-plus-circle"></i> Registrar Nueva Nómina</h5>
-            <div class="row g-3">
-              <div class="col-md-4">
-                <label class="small fw-bold">Fecha de Actividad:</label>
-                <input type="date" class="form-control" [(ngModel)]="nuevaNomina.fechaActividad">
-                <div class="mt-3">
-                  <label class="small fw-bold text-dark">Link de Tracking (Opcional):</label>
-                  <div class="input-group">
-                    <span class="input-group-text bg-white"><i class="bi bi-geo-alt-fill" style="color: #0D2A1B;"></i></span>
-                    <input type="text" class="form-control" [(ngModel)]="nuevaNomina.linkTracking" placeholder="Pegar URL...">
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-8">
-                <label class="small fw-bold mb-2">Seleccionar Unidades:</label>
-                <div class="border rounded p-3 bg-white shadow-sm" style="max-height: 230px; overflow-y: auto;">
-                  <div *ngFor="let t of listaTransportes" class="form-check mb-2">
-                    <input class="form-check-input" type="checkbox" [id]="'check-' + t.id"
-                           [checked]="nuevaNomina.transporteIds.includes(t.id!)"
-                           (change)="toggleTransporte(t.id!)">
-                    <label class="form-check-label small" [for]="'check-' + t.id">
-                      <span class="fw-bold text-dark">{{ t.chofer }}</span> | {{ t.tracto }}
-                    </label>
-                  </div>
-                </div>
-              </div>
-              <div class="col-12 text-end">
-                <button class="btn btn-dark fw-bold" (click)="guardarNomina()" 
-                        [disabled]="!nuevaNomina.fechaActividad || nuevaNomina.transporteIds.length === 0">
-                  Guardar Nómina
-                </button>
-              </div>
+  <div class="card border-0 shadow-sm mb-4 bg-light">
+  <div class="card-body">
+    <div class="row g-3 align-items-end">
+      <div class="col-md-3">
+        <label class="small fw-bold text-muted">Desde:</label>
+        <input type="date" class="form-control form-control-sm" [(ngModel)]="fechaInicio">
+      </div>
+      <div class="col-md-3">
+        <label class="small fw-bold text-muted">Hasta:</label>
+        <input type="date" class="form-control form-control-sm" [(ngModel)]="fechaFin">
+      </div>
+      <div class="col-md-3">
+        <button class="btn btn-sm btn-primary-custom w-100" (click)="aplicarFiltro()"> Buscar </button>
+      </div>
+      <div class="col-md-3">
+        <button class="btn btn-sm btn-outline-secondary w-100" (click)="limpiarFiltros()">
+          <i class="bi bi-arrow-counterclockwise"></i> Limpiar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <div *ngIf="mostrarFormNomina" class="card border-dark mb-4 shadow-sm animate__animated animate__fadeIn">
+    <div class="card-body bg-light">
+      <h5 class="fw-bold text-dark mb-3"><i class="bi bi-plus-circle"></i> Registrar Nueva Nómina</h5>
+      <div class="row g-3">
+        <div class="col-md-4">
+          <label class="small fw-bold">Fecha de Actividad:</label>
+          <input type="date" class="form-control" [(ngModel)]="nuevaNomina.fechaActividad">
+          <div class="mt-3">
+            <label class="small fw-bold text-dark">Link de Tracking (Opcional):</label>
+            <div class="input-group">
+              <span class="input-group-text bg-white"><i class="bi bi-geo-alt-fill" style="color: #0D2A1B;"></i></span>
+              <input type="text" class="form-control" [(ngModel)]="nuevaNomina.linkTracking" placeholder="Pegar URL...">
             </div>
           </div>
         </div>
-
+        <div class="col-md-8">
+          <label class="small fw-bold mb-2">Seleccionar Unidades:</label>
+          <div class="border rounded p-3 bg-white shadow-sm" style="max-height: 230px; overflow-y: auto;">
+            <div *ngFor="let t of listaTransportes" class="form-check mb-2">
+              <input class="form-check-input" type="checkbox" [id]="'check-' + t.id"
+                     [checked]="nuevaNomina.transporteIds.includes(t.id!)"
+                     (change)="toggleTransporte(t.id!)">
+              <label class="form-check-label small" [for]="'check-' + t.id">
+                <span class="fw-bold text-dark">{{ t.chofer }}</span> | {{ t.tracto }}
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 text-end">
+          <button class="btn btn-dark fw-bold" (click)="guardarNomina()"
+                  [disabled]="!nuevaNomina.fechaActividad || nuevaNomina.transporteIds.length === 0">
+            Guardar Nómina
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
         <div class="card shadow-sm border-0">
           <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
-              <thead class="thead-custom">
-                <tr>
-                  <th>ID</th><th>Carga</th><th>Actividad</th><th>Unidades</th><th>Tracking</th><th class="text-center">Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let n of listaNominasFiltrada">
-                  <td class="fw-bold">#{{ n.id }}</td>
-                  <td class="small text-muted">{{ n.fechaCarga | date:'dd/MM/yyyy HH:mm' }}</td>
-                  <td class="fw-bold" style="color: #0D2A1B;">{{ n.fechaActividad | date:'dd/MM/yyyy' }}</td>
-                  <td><span class="badge bg-light text-dark border">{{ n.transportes?.length || 0 }} Unidades</span></td>
-                  <td>
-                    <div class="d-flex flex-column gap-1">
-                      <div *ngFor="let i of filasTracking" class="d-flex align-items-center gap-1">
-                        <input type="text" [ngModel]="getLinkEspecifico(n.linkTracking, i)"
-                               (ngModelChange)="actualizarLinkEnPosicion(n, i, $event)"
-                               class="form-control form-control-sm border-0 bg-light" style="font-size: 0.7rem; height: 24px;">
-                        <button *ngIf="getLinkEspecifico(n.linkTracking, i)" class="btn btn-sm btn-warning" 
-                                style="font-size: 0.6rem; padding: 1px 4px;" (click)="abrirLink(getLinkEspecifico(n.linkTracking, i))">
-                          <i class="bi bi-truck"></i>
-                        </button>
-                      </div>
-                    </div>
-                  </td>
-                  <td class="text-center">
-                    <button class="btn btn-sm btn-primary-custom" (click)="verDetalleNomina(n)" 
-                            data-bs-toggle="modal" data-bs-target="#detalleNominaModal">Ver</button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+  <thead class="thead-custom">
+    <tr>
+      <th>ID</th>
+      <th>Carga</th>
+      <th>Actividad</th>
+      <th>Unidades</th>
+      <th>Tracking</th>
+      <th class="text-center">Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let n of listaNominas">
+      <td class="fw-bold">#{{ n.id }}</td>
+      <td class="small text-muted">{{ n.fechaCarga | date:'dd/MM/yyyy HH:mm' }}</td>
+      <td class="fw-bold" style="color: #0D2A1B;">{{ n.fechaActividad | date:'dd/MM/yyyy' }}</td>
+      <td>
+        <span class="badge bg-light text-dark border">
+          {{ n.transportes?.length || 0 }} Unidades
+        </span>
+      </td>
+      <td>
+        <div class="d-flex flex-column gap-1">
+          <div *ngFor="let t of n.transportes; let i = index" class="d-flex align-items-center gap-1">
+            <div class="input-group input-group-sm" style="max-width: 250px;">
+              <span class="input-group-text bg-white p-1" style="font-size: 0.65rem; min-width: 25px;" [title]="t.chofer">
+                {{ i + 1 }}°
+              </span>
+              <input type="text"
+                     [ngModel]="getLinkEspecifico(n.linkTracking, i)"
+                     (ngModelChange)="actualizarLinkEnPosicion(n, i, $event)"
+                     class="form-control form-control-sm border-0 bg-light"
+                     [placeholder]="'Link para ' + t.chofer"
+                     style="font-size: 0.7rem; height: 24px;">
+            </div>
+
+            <button *ngIf="getLinkEspecifico(n.linkTracking, i)"
+                    class="btn btn-sm btn-warning"
+                    style="font-size: 0.6rem; padding: 1px 4px;"
+                    (click)="abrirLink(getLinkEspecifico(n.linkTracking, i))">
+              <i class="bi bi-truck">Link</i>
+            </button>
+          </div>
+
+          <span *ngIf="!n.transportes || n.transportes.length === 0" class="text-muted small italic">
+            Sin unidades
+          </span>
+        </div>
+      </td>
+      <td class="text-center">
+        <button class="btn btn-sm btn-primary-custom" (click)="verDetalleNomina(n)"
+                data-bs-toggle="modal" data-bs-target="#detalleNominaModal">Ver</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
           </div>
         </div>
       </div>
@@ -189,69 +236,116 @@ import autoTable from 'jspdf-autotable';
   </div>
 
   <div *ngIf="mostrarFormTransporte" class="card border-info mb-4 shadow-sm animate__animated animate__slideInDown">
-    <div class="card-body bg-light">
-      <div class="row g-3">
-        <div class="col-md-4">
-          <label class="small fw-bold">Chofer</label>
-          <input type="text" class="form-control" [(ngModel)]="nuevoTransporte.chofer" placeholder="Nombre del chofer">
-        </div>
+  <div class="card-header bg-info text-white d-flex justify-content-between align-items-center py-2">
+    <h6 class="mb-0 fw-bold">
+      <i class="bi" [ngClass]="editandoTransporte ? 'bi-pencil-square' : 'bi-plus-circle'"></i>
+      {{ editandoTransporte ? ' Actualizar Unidad' : ' Registrar Nuevo Transporte' }}
+    </h6>
+    <button class="btn-close btn-close-white" (click)="cancelarEdicion()" aria-label="Close"></button>
+  </div>
 
-        <div class="col-md-4">
-          <label class="small fw-bold">Tracto (Patente)</label>
-          <div class="input-group">
-            <input type="text" class="form-control" [(ngModel)]="nuevoTransporte.tracto" placeholder="Patente">
-            <input type="text" class="form-control" style="width: 80px;" [(ngModel)]="nuevoTransporte.anioTracto" placeholder="Año">
-          </div>
-        </div>
+  <div class="card-body bg-light">
+    <div class="row g-3">
+      <div class="col-md-4">
+        <label class="small fw-bold text-dark">Chofer</label>
+        <input type="text" class="form-control mb-2" [(ngModel)]="nuevoTransporte.chofer" placeholder="Nombre completo">
 
-        <div class="col-md-4">
-          <label class="small fw-bold">Cisterna (Patente)</label>
-          <div class="input-group">
-            <input type="text" class="form-control" [(ngModel)]="nuevoTransporte.cisterna" placeholder="Patente">
-            <input type="text" class="form-control" style="width: 80px;" [(ngModel)]="nuevoTransporte.anioCisterna" placeholder="Año">
-          </div>
-        </div>
+        <label class="small fw-bold text-success"><i class="bi bi-whatsapp"></i> Contacto (Tel/WhatsApp)</label>
+        <input type="text" class="form-control" [(ngModel)]="nuevoTransporte.contacto" placeholder="Ej: +54 9 342...">
+      </div>
 
-        <div class="col-12 text-end mt-3">
-          <button class="btn btn-primary-custom px-4" (click)="guardarTransporte()"
-                  [disabled]="!nuevoTransporte.chofer || !nuevoTransporte.tracto">
-            <i class="bi bi-save"></i> Guardar Unidad
-          </button>
+      <div class="col-md-4">
+        <label class="small fw-bold">Tracto (Patente)</label>
+        <div class="input-group">
+          <input type="text" class="form-control" [(ngModel)]="nuevoTransporte.tracto" placeholder="Patente">
+          <input type="text" class="form-control" style="width: 80px;" [(ngModel)]="nuevoTransporte.anioTracto" placeholder="Año">
         </div>
+      </div>
+
+      <div class="col-md-4">
+        <label class="small fw-bold">Cisterna (Patente)</label>
+        <div class="input-group">
+          <input type="text" class="form-control" [(ngModel)]="nuevoTransporte.cisterna" placeholder="Patente">
+          <input type="text" class="form-control" style="width: 80px;" [(ngModel)]="nuevoTransporte.anioCisterna" placeholder="Año">
+        </div>
+      </div>
+
+      <div class="col-12 text-end mt-3 border-top pt-3">
+        <button class="btn btn-secondary btn-sm me-2 px-3" (click)="cancelarEdicion()" *ngIf="editandoTransporte">
+          Cancelar
+        </button>
+        <button class="btn btn-primary-custom px-4" (click)="guardarTransporte()"
+                [disabled]="!nuevoTransporte.chofer || !nuevoTransporte.tracto">
+          <i class="bi" [ngClass]="editandoTransporte ? 'bi-arrow-clockwise' : 'bi-save'"></i>
+          {{ editandoTransporte ? ' Actualizar Cambios' : ' Guardar Unidad' }}
+        </button>
       </div>
     </div>
   </div>
+</div>
 
   <div class="card shadow-sm border-0">
     <div class="table-responsive">
-      <table class="table table-hover align-middle mb-0">
-        <thead class="thead-custom">
-          <tr>
-            <th class="ps-4">Chofer</th>
-            <th>Tracto / Año</th>
-            <th>Cisterna / Año</th>
-            <th class="text-center">Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let t of listaTransportes">
-            <td class="fw-bold ps-4">{{ t.chofer }}</td>
-            <td>
-              <span class="badge bg-secondary me-2">{{ t.tracto }}</span>
-              <small class="text-muted" *ngIf="t.anioTracto">Mod. {{ t.anioTracto }}</small>
-            </td>
-            <td>
-              <span class="badge bg-secondary me-2">{{ t.cisterna }}</span>
-              <small class="text-muted" *ngIf="t.anioCisterna">Mod. {{ t.anioCisterna }}</small>
-            </td>
-            <td class="text-center">
-              <button class="btn btn-outline-danger btn-sm border-0" (click)="eliminarTransporte(t.id!)">
-                <i class="bi bi-trash"></i>
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+     <table class="table table-hover align-middle mb-0">
+  <thead class="thead-custom">
+    <tr>
+      <th class="ps-4">Chofer / Contacto</th>
+      <th>Tracto / Año</th>
+      <th>Cisterna / Año</th>
+      <th class="text-center">Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let t of listaTransportes">
+      <td class="ps-4">
+        <div class="fw-bold">{{ t.chofer }}</div>
+
+        <div *ngIf="t.contacto" class="d-flex align-items-center gap-2 mt-1">
+          <small class="text-success fw-bold">{{ t.contacto }}</small>
+
+          <div class="d-flex gap-1">
+            <a [href]="'tel:' + t.contacto" class="text-primary" title="Llamar">
+              <i class="bi bi-telephone" style="font-size: 0.8rem;"></i>
+            </a>
+            <a [href]="'https://wa.me/' + limpiarTelefono(t.contacto)" target="_blank" class="text-success" title="WhatsApp">
+              <i class="bi bi-whatsapp" style="font-size: 0.8rem;"></i>
+            </a>
+          </div>
+        </div>
+
+        <small *ngIf="!t.contacto" class="text-muted fst-italic" style="font-size: 0.7rem;">Sin tel.</small>
+      </td>
+
+      <td>
+        <span class="badge bg-secondary me-2">{{ t.tracto }}</span>
+        <small class="text-muted" *ngIf="t.anioTracto">Mod. {{ t.anioTracto }}</small>
+      </td>
+
+      <td>
+        <span class="badge bg-secondary me-2">{{ t.cisterna }}</span>
+        <small class="text-muted" *ngIf="t.anioCisterna">Mod. {{ t.anioCisterna }}</small>
+      </td>
+
+      <td class="text-center">
+  <div class="d-flex justify-content-center gap-2">
+
+    <button class="btn btn-sm btn-primary btn-hover shadow-sm"
+            (click)="prepararEdicion(t)"
+            title="Editar">
+      <i class="bi bi-pencil-square">editar</i>
+    </button>
+
+    <button class="btn btn-sm btn-danger btn-hover shadow-sm"
+            (click)="eliminarTransporte(t.id!)"
+            title="Eliminar">
+      <i class="bi bi-trash">eliminar</i>
+    </button>
+
+  </div>
+</td>
+    </tr>
+  </tbody>
+</table>
     </div>
   </div>
 </div>
@@ -323,7 +417,7 @@ import autoTable from 'jspdf-autotable';
               </td>
               <td class="text-center">
                 <button class="btn btn-outline-danger btn-sm border-0" (click)="eliminarUsuario(u.id)">
-                  <i class="bi bi-trash"></i>
+                  <i class="bi bi-trash">Eliminar</i>
                 </button>
               </td>
             </tr>
@@ -373,13 +467,25 @@ import autoTable from 'jspdf-autotable';
   </div>
 </div>
   `,
-  styles: [`.btn-hover:hover { transform: translateY(-3px); transition: 0.2s; }`]
+  styles: [`
+  .btn-hover {
+    transition: all 0.2s ease-in-out; /* Suaviza el regreso a la posición original */
+    opacity: 1 !important;           /* Fuerza la visibilidad total siempre */
+  }
+  
+  .btn-hover:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15); /* Le da profundidad al "saltar" */
+    filter: brightness(1.1);               /* Lo aclara un poquito al tocarlo */
+  }
+`]
 })
 export class DashboardComponent implements OnInit {
   // CONFIGURACIÓN DE TIPOS EXPLÍCITA PARA EVITAR ERROR TS2367
   usuarioNombre: string = 'Usuario';
   usuarioRol: string = 'Visor';
   seccionActiva: string = 'inicio';
+  editandoTransporte: boolean = false;
 
   listaNominas: Nomina[] = [];
   listaNominasFiltrada: Nomina[] = [];
@@ -395,7 +501,7 @@ export class DashboardComponent implements OnInit {
 
   listaTransportes: Transporte[] = [];
   mostrarFormTransporte: boolean = false;
-  nuevoTransporte: Transporte = { chofer: '', tracto: '', cisterna: '', anioTracto: '', anioCisterna: '' };
+  nuevoTransporte: Transporte = { chofer: '', tracto: '', cisterna: '', anioTracto: '', anioCisterna: '', contacto: '' } as Transporte;
 
   listaUsuarios: any[] = [];
   mostrarFormUsuario: boolean = false;
@@ -479,6 +585,7 @@ export class DashboardComponent implements OnInit {
   }
   verDetalleNomina(n: Nomina) { this.nominaSeleccionada = n; }
 
+
   // TRACKING MÚLTIPLE
   getLinkEspecifico(links: any, i: number): string {
     if (!links || typeof links !== 'string') return '';
@@ -486,7 +593,11 @@ export class DashboardComponent implements OnInit {
   }
   actualizarLinkEnPosicion(n: Nomina, i: number, val: string) {
     let arr = (n.linkTracking || '').split(',');
-    while (arr.length < 6) arr.push('');
+
+    // Aseguramos que el array tenga espacio para todos los transportes actuales
+    const totalTransportes = n.transportes?.length || 0;
+    while (arr.length < totalTransportes) arr.push('');
+
     arr[i] = val.trim();
     n.linkTracking = arr.join(',');
     this.nominaService.actualizarTracking(n.id!, n.linkTracking).subscribe();
@@ -496,15 +607,77 @@ export class DashboardComponent implements OnInit {
     window.open(url.startsWith('http') ? url : `https://${url}`, '_blank');
   }
 
+  fechaInicio: string = '';
+  fechaFin: string = '';
+
+  aplicarFiltro() {
+    console.log('¡Botón presionado!');
+    console.log('Fecha Inicio:', this.fechaInicio);
+    console.log('Fecha Fin:', this.fechaFin);
+
+    this.nominaService.getNominasFiltradas(this.fechaInicio, this.fechaFin)
+      .subscribe({
+        next: (data) => {
+          console.log('Respuesta del servidor:', data);
+          this.listaNominas = data;
+        },
+        error: (e) => console.error('Error en la llamada:', e)
+      });
+  }
+
+  // AGREGADO PARA EVITAR EL ERROR DE COMPILACIÓN TS2339
+  limpiarFiltros() {
+    this.fechaInicio = '';
+    this.fechaFin = '';
+    this.aplicarFiltro(); // Recarga la lista completa al limpiar los inputs
+  }
+
   // TRANSPORTES
   cargarTransportes() { this.transporteService.getTransportes().subscribe(d => this.listaTransportes = d); }
   guardarTransporte() {
-    this.transporteService.registrarTransporte(this.nuevoTransporte).subscribe(() => {
-      this.cargarTransportes();
-      this.mostrarFormTransporte = false;
-      this.nuevoTransporte = { chofer: '', tracto: '', cisterna: '', anioTracto: '', anioCisterna: '' };
-    });
+    if (this.editandoTransporte && this.nuevoTransporte.id) {
+      // --- LÓGICA DE ACTUALIZACIÓN (PUT) ---
+      this.transporteService.actualizarTransporte(this.nuevoTransporte.id, this.nuevoTransporte).subscribe(() => {
+        this.finalizarGuardado();
+      });
+    } else {
+      // --- LÓGICA DE CREACIÓN (POST) ---
+      this.transporteService.registrarTransporte(this.nuevoTransporte).subscribe(() => {
+        this.finalizarGuardado();
+      });
+    }
   }
+
+  // Función auxiliar para no repetir código de limpieza
+  finalizarGuardado() {
+    this.cargarTransportes();
+    this.mostrarFormTransporte = false;
+    this.editandoTransporte = false;
+    this.nuevoTransporte = {
+      chofer: '',
+      tracto: '',
+      cisterna: '',
+      anioTracto: '',
+      anioCisterna: '',
+      contacto: ''
+    } as Transporte;
+  }
+  // Función para cargar los datos en el formulario
+  prepararEdicion(t: Transporte) {
+    this.editandoTransporte = true;
+    this.mostrarFormTransporte = true;
+    // Usamos {...t} para crear una copia y que no se modifique la tabla 
+    // mientras el usuario escribe en el formulario.
+    this.nuevoTransporte = { ...t };
+  }
+
+  // Modificá tu función cancelar para limpiar el estado
+  cancelarEdicion() {
+    this.mostrarFormTransporte = false;
+    this.editandoTransporte = false;
+    this.nuevoTransporte = { chofer: '', tracto: '', cisterna: '' } as Transporte;
+  }
+ 
   eliminarTransporte(id: number) {
     if (confirm('¿Eliminar unidad?')) this.transporteService.eliminarTransporte(id).subscribe(() => this.cargarTransportes());
   }
@@ -611,4 +784,9 @@ export class DashboardComponent implements OnInit {
     doc.save(`Detalle_Nomina_${n.id}.pdf`);
   }
   logout() { localStorage.clear(); this.router.navigate(['/login']); }
+
+  limpiarTelefono(tel: string | undefined): string {
+    if (!tel) return '';
+    return tel.replace(/\D/g, '');
+  }
 }
