@@ -29,8 +29,10 @@ export class AuthService {
   }
 
   actualizarRol(id: number, nuevoRol: string): Observable<any> {
+    // El body debe tener la clave "nuevoRol" para que coincida con tu DTO de .NET
     const body = { nuevoRol: nuevoRol };
-    // Corregido: Agregamos /Usuarios/ antes de la acción
+
+    // Apunta a: .../api/Usuarios/actualizar-rol/{id}
     return this.http.put<any>(`${this.endpoint}/actualizar-rol/${id}`, body);
   }
 

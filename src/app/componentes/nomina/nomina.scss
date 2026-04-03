@@ -1,0 +1,68 @@
+@use "sass:color";
+
+// Variables L4GA
+$verde-l4ga: #0D2A1B;
+$amarillo-l4ga: #FFC600;
+
+.container-fluid {
+  // Margen lateral y respiro inferior para la tabla
+  .table-container {
+    margin: 20px 25px 50px 25px;
+  }
+
+  .table {
+    border-collapse: separate;
+    border-spacing: 0;
+
+    thead {
+      background-color: transparent !important;
+
+      th {
+        background-color: $verde-l4ga !important;
+        color: #ffffff !important;
+        text-transform: uppercase;
+        font-weight: 700;
+        font-size: 0.85rem;
+        padding: 12px 15px !important;
+        text-align: left !important;
+        // LOS CORTES BLANCOS
+        border-right: 4px solid #ffffff !important;
+        border-bottom: none !important;
+
+        &:last-child {
+          border-right: none !important; // El último bloque no tiene corte
+        }
+        // Redondeado en las esquinas del bloque verde
+        &:first-child {
+          border-top-left-radius: 4px;
+        }
+
+        &.ultimo-bloque-verde {
+          border-top-right-radius: 4px;
+        }
+      }
+    }
+
+    tbody td {
+      padding: 12px 15px !important;
+      vertical-align: middle;
+      border-bottom: 1px solid #f0f0f0;
+      color: #444;
+      font-size: 0.9rem;
+    }
+  }
+  // Estilo para el botón "Ver Detalle" (tipo link como en Equipos)
+  .btn-link-l4ga {
+    background: none;
+    border: none;
+    color: $verde-l4ga;
+    font-weight: 700;
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 0.9rem;
+
+    &:hover {
+      color: color.adjust($verde-l4ga, $lightness: 15%);
+    }
+  }
+}

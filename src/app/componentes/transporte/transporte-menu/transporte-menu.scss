@@ -1,0 +1,20 @@
+.btn-amarillo-menu {
+  background-color: #FFC600;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  // Bajamos a la mitad (era 200px)
+  min-height: 100px;
+  border-radius: 4px; // Siguiendo la estética recta que pusimos en el Nav
+
+  &:hover {
+    transform: translateY(-3px);
+    filter: brightness(1.05);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1) !important;
+  }
+
+  h2 {
+    letter-spacing: 0.5px;
+    font-size: 1.4rem; // Achicamos un poco la fuente también
+    color: #0D2A1B !important; // Para que haga juego con el verde del Nav
+  }
+}

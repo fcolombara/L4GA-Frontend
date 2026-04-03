@@ -1,0 +1,113 @@
+@use "sass:color";
+
+$verde-oscuro: #0D2A1B;
+$amarillo-l4ga: #FFC600;
+$gris-borde: #dee2e6;
+$verde-l4ga: #0D2A1B;
+
+.container-fluid {
+  // Botón Amarillo Institucional
+  .btn-amarillo-l4ga {
+    background-color: $amarillo-l4ga !important;
+    color: $verde-oscuro !important;
+    border: none;
+    font-weight: 700;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background-color: color.adjust($amarillo-l4ga, $lightness: -10%) !important;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+  }
+  // Estilos de la Tabla Profesional con Cortes
+  .table {
+    // CAMBIO CLAVE: Permite que se vean los espacios entre celdas del thead
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 1rem;
+
+    thead {
+      th {
+        background-color: $verde-l4ga !important;
+        color: #ffffff !important;
+        text-transform: uppercase;
+        font-weight: 700;
+        font-size: 0.85rem;
+        padding: 12px 15px !important;
+        // ALINEACIÓN A LA IZQUIERDA (Para no confundir)
+        text-align: center !important;
+        // CORTES BLANCOS ENTRE COLUMNAS
+        border-right: 4px solid #ffffff !important;
+        border-bottom: none !important;
+
+        &:last-child {
+          border-right: none !important; // El último no tiene corte
+        }
+        // Bordes redondeados sutiles en los extremos
+        &:first-child {
+          border-top-left-radius: 4px;
+        }
+
+        &.ultimo-bloque-verde {
+          border-top-right-radius: 4px;
+        }
+      }
+    }
+
+    tbody td {
+      padding: 12px 15px !important;
+      vertical-align: middle;
+      border-bottom: 1px solid #f0f0f0;
+      color: #444;
+      font-size: 0.9rem;
+      text-align: left !important; // Datos también a la izquierda
+      &.text-center {
+        text-align: center !important;
+      }
+    }
+  }
+  // Patentes (Estilo chapa "Mercosur")
+  .badge.bg-light {
+    border: 1px solid $gris-borde !important;
+    letter-spacing: 1px;
+    font-family: 'Roboto Mono', monospace;
+    padding: 0.5em 0.8em;
+    color: #333;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+  }
+  // Formulario (Card con acento L4GA)
+  .card {
+    &.border-0 {
+      border-left: 5px solid $amarillo-l4ga !important;
+      border-radius: 8px;
+    }
+
+    .form-control {
+      &:focus {
+        border-color: $amarillo-l4ga;
+        box-shadow: 0 0 0 0.25rem rgba(255, 198, 0, 0.25);
+      }
+    }
+  }
+  // Botones de acción tipo link
+  .btn-link {
+    text-decoration: none;
+    font-size: 0.95rem;
+    color: $verde-oscuro;
+    font-weight: 500;
+
+    &:hover {
+      text-decoration: underline;
+      color: color.adjust($verde-oscuro, $lightness: 10%);
+    }
+
+    &.text-danger:hover {
+      color: #dc3545 !important;
+    }
+  }
+}
+
+.animate__animated {
+  --animate-duration: 0.4s;
+}

@@ -9,7 +9,8 @@ import { AuthResponse } from '../models/user.model';
   selector: 'app-login',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink],
-  templateUrl: './login.html'
+  templateUrl: './login.html',
+  styleUrl: './login.scss'
 })
 export class LoginComponent {
   loginData = { email: '', password: '' };

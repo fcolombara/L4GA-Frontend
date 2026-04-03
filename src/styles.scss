@@ -113,6 +113,24 @@ a {
     text-decoration: underline;
   }
 }
+/* Color principal de L4GA */
+.btn-posta {
+  background-color: #0D2A1B; /* Tu verde oscuro */
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border-bottom: 5px solid #FFC600 !important; /* Detalle amarillo abajo */
+}
+
+/* Efecto al pasar el mouse */
+.btn-posta:hover {
+  transform: translateY(-10px);
+  background-color: #163d28; /* Un verde un poquito más claro al hover */
+  box-shadow: 0 10px 20px rgba(0,0,0,0.2) !important;
+}
+
+.btn-posta h5 {
+  letter-spacing: 1px;
+}
 
 .form-control:focus, .form-select:focus, .form-check-input:focus {
   border-color: $amarillo-principal !important;

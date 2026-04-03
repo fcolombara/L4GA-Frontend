@@ -1,0 +1,73 @@
+<div class="container mt-4">
+
+  <div *ngIf="paso === 1">
+    <div class="text-center mb-4">
+      <h3 class="fw-bold" style="color: #0D2A1B;">POSTA 2: INGRESO GREEN OIL (PY)</h3>
+      <p class="text-muted">Seleccione el camión que llegó a planta para registrar ingreso</p>
+    </div>
+
+    <div class="row g-3">
+      <div class="col-md-6" *ngFor="let op of operacionesPendientes">
+        <div class="card shadow-sm border-0 hvr-grow" (click)="seleccionar(op)"
+             style="cursor: pointer; border-left: 5px solid #FFC600 !important; background-color: #f8f9fa;">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h4 class="fw-bold mb-0 text-dark">{{ op.transporte.tracto }}</h4>
+                <span class="badge bg-dark text-warning">{{ op.fecha | date:'dd/MM/yyyy' }}</span>
+              </div>
+              <div class="text-end">
+                <p class="mb-0 fw-bold">{{ op.transporte.chofer }}</p>
+                <small class="text-muted">Salida Cremer: {{ op.litrosCremer | number }} Lts</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 text-center" *ngIf="operacionesPendientes.length === 0">
+        <div class="alert alert-light border shadow-sm">
+          <i class="bi bi-info-circle text-primary display-6"></i>
+          <p class="mt-2 mb-0">No hay camiones en viaje desde Santa Fe en este momento.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="paso === 2" class="card shadow border-0">
+    <div class="card-header text-white px-4 py-3" style="background-color: #0D2A1B;">
+      <div class="d-flex justify-content-between align-items-center">
+        <span>Registrando Ingreso: <strong>{{ operacionSeleccionada.transporte.tracto }}</strong></span>
+        <button class="btn btn-sm btn-outline-warning" (click)="paso = 1">Volver</button>
+      </div>
+    </div>
+    <div class="card-body p-4">
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <label class="form-label fw-bold">Hora de Ingreso (PY)</label>
+          <input type="time" [(ngModel)]="ingreso.horaInGreen" class="form-control form-control-lg border-primary">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label fw-bold">Litros Ingresados (según planta)</label>
+          <input type="number" [(ngModel)]="ingreso.litrosInGreen"
+                 class="form-control form-control-lg border-primary"
+                 placeholder="Ingrese los litros recibidos">
+        </div>
+      </div>
+
+      <div class="alert alert-warning d-flex justify-content-between align-items-center" *ngIf="ingreso.litrosInGreen">
+        <span><i class="bi bi-exclamation-triangle me-2"></i> Diferencia vs Cremer:</span>
+        <strong [class.text-danger]="(ingreso.litrosInGreen - operacionSeleccionada.litrosCremer) < 0">
+          {{ ingreso.litrosInGreen - operacionSeleccionada.litrosCremer | number }} Lts
+        </strong>
+      </div>
+
+      <button class="btn btn-lg w-100 fw-bold shadow"
+              style="background-color: #FFC600; color: #0D2A1B;"
+              (click)="guardarIngreso()"
+              [disabled]="!ingreso.horaInGreen || !ingreso.litrosInGreen">
+        CONFIRMAR RECEPCIÓN EN GREEN OIL
+      </button>
+    </div>
+  </div>
+</div>

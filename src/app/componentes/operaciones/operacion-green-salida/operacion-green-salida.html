@@ -1,0 +1,52 @@
+<div class="container mt-4">
+  <h2 class="text-primary"><i class="bi bi-box-arrow-right"></i> Salida de Planta - Paraguay</h2>
+  <hr>
+
+  <div class="row">
+    <div class="col-md-5">
+      <h4>Camiones en Planta</h4>
+      <div class="list-group shadow-sm">
+        <button *ngFor="let op of operacionesEnPlanta"
+                (click)="seleccionar(op)"
+                [class.active]="seleccionado?.id === op.id"
+                class="list-group-item list-group-item-action border-primary-subtle">
+          <strong>Unidad: {{ op.transporte?.tracto }}</strong> <br>
+          <small class="text-muted">Chofer: {{ op.transporte?.chofer }}</small> <br>
+          <small>Ingreso: {{ op.horaInGreen }} | {{ op.litrosInGreen }} Lts</small>
+        </button>
+      </div>
+      <div *ngIf="operacionesEnPlanta.length === 0" class="alert alert-info mt-2">
+        No hay camiones pendientes de salida.
+      </div>
+    </div>
+
+    <div class="col-md-7" *ngIf="seleccionado">
+      <div class="card border-primary shadow">
+        <div class="card-header bg-primary text-white d-flex justify-content-between">
+          <span>Registrar Salida: {{ seleccionado.transporte?.tracto }}</span>
+          <span class="badge bg-light text-primary">ID: #{{ seleccionado.id }}</span>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-bold">Hora de Salida</label>
+              <input type="time" class="form-control" [(ngModel)]="formSalida.horaOutGreen">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-bold">Litros Salida (Balanza)</label>
+              <input type="number" class="form-control" [(ngModel)]="formSalida.litrosOutGreen" placeholder="Ej: 27950">
+            </div>
+          </div>
+
+          <div class="alert alert-secondary py-2">
+            <small><strong>Control de stock:</strong> El camión ingresó a esta planta con {{ seleccionado.litrosInGreen }} litros.</small>
+          </div>
+
+          <button class="btn btn-primary w-100 mt-2" (click)="guardarSalida()">
+            <i class="bi bi-check-circle"></i> Confirmar Salida Definitiva
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

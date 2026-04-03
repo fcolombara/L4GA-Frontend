@@ -1,0 +1,94 @@
+<div class="container mt-5 animate__animated animate__fadeIn">
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <h2 class="fw-bold d-flex align-items-center" style="color: #0D2A1B;">
+      <img src="assets/Users_Icono.png"
+           alt="Icono Usuario"
+           style="height: 40px; width: auto;"
+           class="me-3 animate__animated animate__fadeInLeft">
+
+      <i class="bi bi-people-fill me-2"></i>
+
+      Gestión de Usuarios
+    </h2>
+    <button class="btn"
+            [style.background-color]="mostrarFormUsuario ? '#dc3545' : '#FFC600'"
+            [style.color]="mostrarFormUsuario ? '#fff' : '#0D2A1B'"
+            (click)="cancelarEdicion()">
+      <span class="fw-bold">{{ mostrarFormUsuario ? '✕ Cancelar' : '＋ Nuevo Usuario' }}</span>
+    </button>
+  </div>
+
+  <div *ngIf="mostrarFormUsuario" class="card border-0 shadow-sm mb-4 animate__animated animate__fadeInDown">
+    <div class="card-body bg-light rounded">
+      <h5 class="fw-bold mb-3" style="color: #0D2A1B;">
+        {{ editando ? 'Editar Rol de: ' + nuevoUsuario.Nombre : 'Registrar Nuevo Usuario' }}
+      </h5>
+
+      <div class="row g-3">
+        <div class="col-md-3">
+          <label class="small fw-bold">Nombre Completo</label>
+          <input type="text" class="form-control" [(ngModel)]="nuevoUsuario.Nombre"
+                 placeholder="Ej: Juan Perez" [disabled]="editando">
+        </div>
+        <div class="col-md-3">
+          <label class="small fw-bold">Email Institucional</label>
+          <input type="email" class="form-control" [(ngModel)]="nuevoUsuario.Email"
+                 placeholder="usuario@l4ga.com" [disabled]="editando">
+        </div>
+        <div class="col-md-3">
+          <label class="small fw-bold">{{ editando ? 'Contraseña (No editable)' : 'Contraseña' }}</label>
+          <input type="password" class="form-control" [(ngModel)]="nuevoUsuario.PasswordHash"
+                 [disabled]="editando" [placeholder]="editando ? '********' : ''">
+        </div>
+        <div class="col-md-3">
+          <label class="small fw-bold text-primary">Rol de Acceso</label>
+          <select class="form-select border-primary" [(ngModel)]="nuevoUsuario.Rol" style="border-width: 2px;">
+            <option value="Admin">Admin</option>
+            <option value="Operario">Operario</option>
+            <option value="Visor">Visor</option>
+          </select>
+        </div>
+        <div class="col-12 text-end">
+          <hr>
+          <button class="btn btn-dark px-4 fw-bold"
+                  (click)="editando ? actualizarUsuario() : registrarUsuario()"
+                  [disabled]="!nuevoUsuario.Nombre || !nuevoUsuario.Email">
+            {{ editando ? 'ACTUALIZAR ROL' : 'GUARDAR USUARIO' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="table-container animate__animated animate__fadeIn">
+    <table class="table-custom">
+      <thead>
+        <tr>
+          <th class="ps-4">Nombre</th>
+          <th>Email</th>
+          <th class="text-center">Rol</th>
+          <th class="text-center">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let u of listaUsuarios">
+          <td class="ps-4">
+            <span class="fw-bold" style="color: #0D2A1B;">{{ u.nombre }}</span>
+          </td>
+          <td class="text-muted">{{ u.email }}</td>
+          <td class="text-center">
+            <span class="badge-rol badge-rol-l4ga">{{ u.rol | uppercase }}</span>
+          </td>
+          <td class="text-center">
+            <button class="btn btn-sm text-primary border-0 fw-bold me-2" (click)="prepararEdicion(u)">
+              <i class="bi bi-pencil-square"></i> EDITAR
+            </button>
+            <button class="btn btn-sm text-danger border-0 fw-bold" (click)="eliminarUsuario(u.id)">
+              <i class="bi bi-trash3-fill"></i> ELIMINAR
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

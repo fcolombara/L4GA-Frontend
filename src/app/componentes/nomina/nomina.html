@@ -1,0 +1,135 @@
+<div class="container-fluid mt-4 animate__animated animate__fadeIn">
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <div class="d-flex align-items-center">
+      <i class="bi bi-file-earmark-text fs-2 me-3 text-secondary"></i>
+      <img src="assets/Transporte_Icono.png"
+           alt="Icono Transporte"
+           style="height: 45px; width: auto;"
+           class="me-3 shadow-sm animate__animated animate__bounceIn">
+      <h2 class="fw-bold mb-0 text-dark">Transporte > Asignacion Diaria</h2>
+    </div>
+    <div class="btn-group shadow-sm">
+      <button class="btn btn-danger fw-bold" (click)="exportarNominasPDF()">
+        <i class="bi bi-file-pdf"></i> PDF GENERAL
+      </button>
+      <button *ngIf="usuarioRol.toLowerCase() === 'admin' || usuarioRol.toLowerCase() === 'operario'"
+              type="button" class="btn btn-action-custom px-4" (click)="mostrarFormNomina = !mostrarFormNomina">
+        {{ mostrarFormNomina ? '✖ Cancelar' : '➕ Nueva Nómina' }}
+      </button>
+    </div>
+  </div>
+
+  <div class="card border-0 shadow-sm mb-4 bg-light">
+    <div class="card-body">
+      <div class="row g-3 align-items-end">
+        <div class="col-md-3">
+          <label class="small fw-bold text-muted d-block mb-1">Desde:</label>
+          <input type="date" class="form-control form-control-sm" [(ngModel)]="fechaInicio">
+        </div>
+        <div class="col-md-3">
+          <label class="small fw-bold text-muted d-block mb-1">Hasta:</label>
+          <input type="date" class="form-control form-control-sm" [(ngModel)]="fechaFin">
+        </div>
+        <div class="col-md-3">
+          <button class="btn btn-sm btn-primary-custom w-100 fw-bold" (click)="aplicarFiltro()"> BUSCAR </button>
+        </div>
+        <div class="col-md-3">
+          <button class="btn btn-sm btn-outline-secondary w-100" (click)="limpiarFiltros()">
+            <i class="bi bi-arrow-counterclockwise"></i> Limpiar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="mostrarFormNomina" class="card border-dark mb-4 shadow animate__animated animate__fadeIn">
+    <div class="card-body bg-light p-4">
+      <h5 class="fw-bold text-dark mb-4"><i class="bi bi-plus-circle"></i> Registrar Nueva Nómina</h5>
+      <div class="row g-3">
+        <div class="col-md-4 border-end">
+          <label class="small fw-bold mb-2">Fecha de Actividad:</label>
+          <input type="date" class="form-control mb-3" [(ngModel)]="nuevaNomina.fechaActividad">
+
+          <label class="small fw-bold text-dark mb-2">Link de Tracking General (Opcional):</label>
+          <div class="input-group">
+            <span class="input-group-text bg-white"><i class="bi bi-geo-alt-fill" style="color: #0D2A1B;"></i></span>
+            <input type="text" class="form-control" [(ngModel)]="nuevaNomina.linkTracking" placeholder="URL principal...">
+          </div>
+        </div>
+
+        <div class="col-md-8">
+          <label class="small fw-bold mb-2 text-uppercase">Asignar Unidades:</label>
+          <div class="border rounded p-2 bg-white" style="max-height: 200px; overflow-y: auto;">
+            <div *ngFor="let t of listaTransportes" class="form-check p-1 ms-2">
+              <input class="form-check-input" type="checkbox" [id]="'t-'+t.id"
+                     (change)="toggleTransporte(t.id!)"
+                     [checked]="nuevaNomina.transporteIds.includes(t.id!)">
+              <label class="form-check-label small" [for]="'t-'+t.id">{{t.chofer}} | {{t.tracto}}</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 text-end mt-3">
+          <button class="btn btn-dark px-5 fw-bold" (click)="guardarNomina()"
+                  [disabled]="!nuevaNomina.fechaActividad || nuevaNomina.transporteIds.length === 0">
+            GUARDAR NÓMINA
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container-fluid">
+    <div class="table-container">
+      <div class="table-responsive shadow-sm rounded bg-white">
+        <table class="table table-hover align-middle mb-0">
+          <thead>
+            <tr>
+              <th class="ps-4">ID</th>
+              <th>Carga</th>
+              <th>Actividad</th>
+              <th>Unidades</th>
+              <th class="ultimo-bloque-verde">Tracking Específico</th>
+              <th style="background-color: transparent !important; border: none !important;"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let n of listaNominas" class="animate__animated animate__fadeIn">
+              <td class="fw-bold ps-4">#{{ n.id }}</td>
+              <td class="small text-muted">{{ n.fechaCarga | date:'dd/MM/yyyy HH:mm' }}</td>
+              <td class="fw-bold" style="color: #0D2A1B;">{{ n.fechaActividad | date:'dd/MM/yyyy' }}</td>
+              <td>
+                <span class="badge bg-light text-dark border">
+                  {{ n.transportes?.length || 0 }} Unidades
+                </span>
+              </td>
+              <td>
+                <div class="d-flex flex-column gap-1">
+                  <div *ngFor="let t of n.transportes; let i = index" class="d-flex align-items-center gap-1">
+                    <div class="input-group input-group-sm" style="max-width: 250px;">
+                      <span class="input-group-text bg-white p-1" style="font-size: 0.65rem; min-width: 25px;">{{ i + 1 }}°</span>
+                      <input type="text"
+                             [ngModel]="getLinkEspecifico(n.linkTracking, i)"
+                             (ngModelChange)="actualizarLinkEnPosicion(n, i, $event)"
+                             class="form-control form-control-sm border-0 bg-light"
+                             [placeholder]="'Link para ' + t.chofer"
+                             style="font-size: 0.7rem; height: 24px;">
+                    </div>
+                    <button *ngIf="getLinkEspecifico(n.linkTracking, i)"
+                            class="btn btn-sm btn-warning"
+                            style="font-size: 0.6rem; padding: 1px 4px;"
+                            (click)="abrirLink(getLinkEspecifico(n.linkTracking, i))">
+                      <i class="bi bi-truck"></i>
+                    </button>
+                  </div>
+                </div>
+              </td>
+              <td class="text-end pe-4">
+                <button class="btn-link-l4ga" (click)="verDetalleNomina(n)">Ver Detalle</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>

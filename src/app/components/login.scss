@@ -1,33 +1,78 @@
 .login-page-bg {
-  background-color: #05140d; // Un verde casi negro para el fondo de pantalla
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  /* Overlay NEGRO (0,0,0) al 40% para dar contraste sin teñir de verde */
+  background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('/assets/back-login.jpeg') no-repeat center center fixed !important;
+  background-size: cover !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
 }
 
-.form-control {
-  color: white !important;
-  &::placeholder {
-    color: rgba(255, 255, 255, 0.5) !important;
+/* Este selector es la clave para ganarle a Bootstrap */
+:host ::ng-deep {
+  .card {
+    /* Bajamos a 0.5 (50% de opacidad). Esto hará que se vea mucho más el fondo */
+    background-color: rgba(13, 42, 27, 0.5) !important;
+    /* Subimos el blur a 20px para un efecto de vidrio más suave y premium */
+    backdrop-filter: blur(20px) saturate(160%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(160%) !important;
+    /* Mantenemos el borde sutil para que la tarjeta no se pierda */
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    border-top: 5px solid #FFC600 !important;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5) !important;
+    border-radius: 15px !important;
+    background-image: none !important;
   }
-  &:focus {
+
+  .form-control, .input-group-text {
+    /* Un blanco al 15% da ese efecto de gris claro profesional */
     background-color: rgba(255, 255, 255, 0.15) !important;
-    border: 1px solid #FFC600 !important;
-    box-shadow: none !important;
-  }
-}
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    backdrop-filter: blur(5px); /* Para que el input también tenga textura */
 
-.btn-login-custom {
-  background-color: #FFC600;
-  color: #0D2A1B;
-  border: none;
-  transition: all 0.3s ease;
-  
-  &:hover:not(:disabled) {
-    background-color: #ffffff !important; // Cambia a blanco al pasar el mouse
-    color: #0D2A1B;
-    transform: scale(1.02);
+    &::placeholder {
+      color: rgba(255, 255, 255, 0.6) !important; /* Placeholder legible */
+    }
   }
-  
-  &:disabled {
-    background-color: #555 !important;
-    color: #888;
+
+  .input-group-text {
+    border-right: none !important;
+    color: #FFC600 !important; /* Mantenemos el amarillo L4GA para los iconos */
+  }
+
+  .form-control {
+    border-left: none !important;
+
+    &:focus {
+      background-color: rgba(255, 255, 255, 0.25) !important; /* Se aclara al hacer clic */
+      border-color: #FFC600 !important;
+      box-shadow: 0 0 0 0.25rem rgba(255, 198, 0, 0.2) !important;
+      outline: none;
+    }
   }
 }
+  /* El botón con el amarillo de L4GA */
+  button[type="submit"] {
+    transition: all 0.3s ease;
+    background-color: #FFC600 !important;
+    color: #0d2a1b !important;
+    border: none !important;
+
+    &:hover:not(:disabled) {
+      background-color: #e6b300 !important; /* Un amarillo un poco más oscuro */
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3) !important;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      background-color: #555 !important;
+      color: #aaa !important;
+    }
+  }

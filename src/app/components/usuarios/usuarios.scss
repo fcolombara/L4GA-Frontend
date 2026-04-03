@@ -1,0 +1,75 @@
+/* Contenedor de la tabla para que no tenga fondo gris */
+.table-container {
+  background-color: transparent;
+}
+
+.table-custom {
+  width: 100%;
+  /* CRÍTICO: Esto crea el espacio en blanco entre celdas */
+  border-collapse: separate;
+  border-spacing: 8px 0;
+  margin-top: 10px;
+
+  thead th {
+    background-color: #0D2A1B !important; /* Verde L4GA */
+    color: white !important;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 0.8rem;
+    padding: 15px;
+    border: none;
+    text-align: left;
+    /* Redondeamos solo las esquinas superiores de cada celda del header */
+    &:first-child {
+      border-radius: 4px 0 0 0;
+    }
+
+    &:last-child {
+      border-radius: 0 4px 0 0;
+    }
+  }
+
+  tbody td {
+    background-color: white; /* Fondo blanco para las filas */
+    padding: 15px;
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+    /* Hacemos que la primera y última celda de la fila cierren el borde lateral */
+    &:first-child {
+      border-left: 1px solid #eee;
+    }
+
+    &:last-child {
+      border-right: 1px solid #eee;
+    }
+  }
+
+  tbody tr:hover td {
+    background-color: #f8f9fa; /* Efecto hover sutil */
+  }
+}
+
+/* Badges de Rol */
+/* Estilo unificado para todos los roles */
+.badge-rol {
+  font-weight: 700;
+  padding: 6px 12px;
+  font-size: 0.7rem;
+  border-radius: 0; /* Mantenemos el estilo cuadrado de la app */
+  display: inline-block;
+  min-width: 90px;
+  text-align: center;
+  /* Color neutro: Fondo gris muy claro y texto oscuro */
+  background-color: #f0f0f0;
+  color: #333;
+  border: 1px solid #ddd;
+  text-transform: uppercase;
+}
+
+/* Opcional: un borde sutil izquierdo en verde L4GA para dar identidad sin usar colores plenos */
+.badge-rol-l4ga {
+  border-left: 3px solid #0D2A1B;
+}
+
+/* Quitamos o comentamos las clases anteriores para que no hagan ruido */
+/* .bg-admin, .bg-operario, .bg-visor { ... } */

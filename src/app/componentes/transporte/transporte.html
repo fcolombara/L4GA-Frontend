@@ -1,0 +1,129 @@
+<div class="container-fluid mt-4 animate__animated animate__fadeIn">
+
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <div class="d-flex align-items-center">
+      <img src="assets/Transporte_Icono.png"
+           alt="Icono Transporte"
+           style="height: 45px; width: auto;"
+           class="me-3 shadow-sm animate__animated animate__bounceIn">
+      <h2 class="fw-bold mb-0 text-dark">Transporte > <span class="text-muted">Nómina de Equipos</span></h2>
+    </div>
+
+    <button class="btn btn-amarillo-l4ga shadow-sm fw-bold px-4" (click)="mostrarFormTransporte = !mostrarFormTransporte">
+      {{ mostrarFormTransporte ? '✖ CANCELAR' : 'AGREGAR EQUIPO' }}
+    </button>
+  </div>
+
+  <hr class="mb-4">
+
+  <div *ngIf="mostrarFormTransporte" class="card border-0 shadow mb-5 animate__animated animate__slideInDown" style="border-left: 5px solid #FFC600 !important;">
+    <div class="card-header bg-dark text-white py-3">
+      <h5 class="mb-0 fw-bold">
+        <i class="bi" [ngClass]="editandoTransporte ? 'bi-pencil-square' : 'bi-plus-circle'"></i>
+        {{ editandoTransporte ? ' Actualizar Unidad' : ' Registrar Nuevo Equipo' }}
+      </h5>
+    </div>
+
+    <div class="card-body bg-light p-4">
+      <div class="row g-4">
+        <div class="col-md-4">
+          <label class="small fw-bold text-uppercase text-muted mb-2 d-block">Chofer</label>
+          <input type="text" class="form-control form-control-lg mb-3" [(ngModel)]="nuevoTransporte.chofer" placeholder="Nombre completo">
+
+          <label class="small fw-bold text-success text-uppercase mb-2 d-block">
+            <i class="bi bi-whatsapp"></i> Contacto (Tel/WhatsApp)
+          </label>
+          <input type="text" class="form-control form-control-lg" [(ngModel)]="nuevoTransporte.contacto" placeholder="Ej: +54 9 342...">
+        </div>
+
+        <div class="col-md-4">
+          <label class="small fw-bold text-uppercase text-muted mb-2 d-block">Tracto (Patente)</label>
+          <div class="input-group input-group-lg">
+            <input type="text" class="form-control" [(ngModel)]="nuevoTransporte.tracto" placeholder="Patente">
+            <input type="text" class="form-control" style="max-width: 100px;" [(ngModel)]="nuevoTransporte.anioTracto" placeholder="Año">
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <label class="small fw-bold text-uppercase text-muted mb-2 d-block">Cisterna (Patente)</label>
+          <div class="input-group input-group-lg">
+            <input type="text" class="form-control" [(ngModel)]="nuevoTransporte.cisterna" placeholder="Patente">
+            <input type="text" class="form-control" style="max-width: 100px;" [(ngModel)]="nuevoTransporte.anioCisterna" placeholder="Año">
+          </div>
+        </div>
+
+        <div class="col-12 text-end mt-4 border-top pt-3">
+          <button class="btn btn-outline-secondary me-2 px-4" (click)="cancelarEdicion()" *ngIf="editandoTransporte">
+            DESCARTAR
+          </button>
+          <button class="btn btn-dark px-5 fw-bold" (click)="guardarTransporte()"
+                  [disabled]="!nuevoTransporte.chofer || !nuevoTransporte.tracto">
+            <i class="bi" [ngClass]="editandoTransporte ? 'bi-arrow-clockwise' : 'bi-save'"></i>
+            {{ editandoTransporte ? ' ACTUALIZAR' : ' GUARDAR UNIDAD' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card shadow-sm border-0 overflow-hidden">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead>
+          <tr>
+            <th>Tracto</th>
+            <th>Chofer</th>
+            <th>Cisterna</th>
+            <th>Año Tracto</th>
+            <th>Año Cisterna</th>
+            <th style="background-color: transparent !important; color: transparent !important; border: none !important;"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let t of listaTransportes" class="border-bottom">
+            <td class="ps-4">
+              <span class="fw-bold fs-5 text-dark">{{ t.tracto }}</span>
+            </td>
+
+            <td>
+              <div class="fw-bold text-uppercase" style="color: #444;">{{ t.chofer }}</div>
+              <div *ngIf="t.contacto" class="d-flex align-items-center gap-2 mt-1">
+                <small class="text-success fw-bold">{{ t.contacto }}</small>
+                <a [href]="'tel:' + t.contacto" class="text-primary d-inline-flex" title="Llamar">
+                  <i class="bi bi-telephone-fill" style="font-size: 0.9rem;"></i>
+                </a>
+                <a [href]="'https://wa.me/' + limpiarTelefono(t.contacto)" target="_blank" class="text-success d-inline-flex" title="WhatsApp">
+                  <i class="bi bi-whatsapp" style="font-size: 0.9rem;"></i>
+                </a>
+              </div>
+              <small *ngIf="!t.contacto" class="text-muted fst-italic">Sin contacto</small>
+            </td>
+
+            <td>
+              <span class="fw-bold text-uppercase" style="color: #444;">{{ t.cisterna }}</span>
+            </td>
+
+            <td class="text-center">{{ t.anioTracto || '-' }}</td>
+            <td class="text-center">{{ t.anioCisterna || '-' }}</td>
+
+            <td class="text-end pe-4">
+              <div class="dropdown">
+                <button class="btn btn-link text-dark fw-bold text-decoration-none" type="button" (click)="prepararEdicion(t)">
+                  Ver / Editar
+                </button>
+                <button class="btn btn-link text-danger p-0 ms-2" (click)="eliminarTransporte(t.id!)" title="Eliminar">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+          <tr *ngIf="listaTransportes.length === 0">
+            <td colspan="6" class="text-center py-5 text-muted">
+              No hay equipos registrados en la nómina.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
