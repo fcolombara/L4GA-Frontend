@@ -34,7 +34,7 @@ export class NominaComponent implements OnInit {
     linkTracking: ''
   };
 
-  usuarioRol: string = localStorage.getItem('userRol') || 'Visor';
+  usuarioRol: string = localStorage.getItem('userRol') || 'Consulta';
 
   constructor(
     private nominaService: NominaService,

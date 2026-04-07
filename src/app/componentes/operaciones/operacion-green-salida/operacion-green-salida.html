@@ -1,52 +1,92 @@
 <div class="container mt-4">
-  <h2 class="text-primary"><i class="bi bi-box-arrow-right"></i> Salida de Planta - Paraguay</h2>
-  <hr>
 
-  <div class="row">
-    <div class="col-md-5">
-      <h4>Camiones en Planta</h4>
-      <div class="list-group shadow-sm">
-        <button *ngFor="let op of operacionesEnPlanta"
-                (click)="seleccionar(op)"
-                [class.active]="seleccionado?.id === op.id"
-                class="list-group-item list-group-item-action border-primary-subtle">
-          <strong>Unidad: {{ op.transporte?.tracto }}</strong> <br>
-          <small class="text-muted">Chofer: {{ op.transporte?.chofer }}</small> <br>
-          <small>Ingreso: {{ op.horaInGreen }} | {{ op.litrosInGreen }} Lts</small>
-        </button>
+  <div *ngIf="!seleccionado">
+    <div class="text-center mb-4">
+      <h3 class="fw-bold" style="color: #0D2A1B;">ETAPA 3 | REGISTRO SALIDA PGORD</h3>
+      <p class="text-muted">Seleccione la unidad que finalizó la carga para registrar su salida definitiva</p>
+    </div>
+
+    <div class="row g-3">
+      <div class="col-md-6" *ngFor="let op of operacionesEnPlanta">
+        <div class="card shadow-sm border-0 hvr-grow" (click)="seleccionar(op)"
+             style="cursor: pointer; border-left: 5px solid #28a745 !important; background-color: #f8f9fa;">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h4 class="fw-bold mb-0 text-dark">{{ op.transporte?.tracto }}</h4>
+                <span class="badge bg-dark text-success">EN PLANTA</span>
+              </div>
+              <div class="text-end">
+                <p class="mb-0 fw-bold">{{ op.transporte?.chofer }}</p>
+                <small class="text-muted">Ingreso: {{ op.horaInPlantaGreen }} hs</small> <br>
+                <small class="text-muted text-uppercase" style="font-size: 0.7rem;">Stock In: {{ op.volDescargadoGreen | number:'1.0-0' }} Lts</small>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div *ngIf="operacionesEnPlanta.length === 0" class="alert alert-info mt-2">
-        No hay camiones pendientes de salida.
+
+      <div class="col-12 text-center" *ngIf="operacionesEnPlanta.length === 0">
+        <div class="alert alert-light border shadow-sm">
+          <i class="bi bi-truck text-success display-6"></i>
+          <p class="mt-2 mb-0">No hay camiones pendientes de salida en este momento.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="seleccionado" class="card shadow border-0">
+    <div class="card-header text-white px-4 py-3" style="background-color: #0D2A1B;">
+      <div class="d-flex justify-content-between align-items-center">
+        <span>Registrando Salida: <strong>{{ seleccionado.transporte?.tracto }}</strong></span>
+        <button class="btn btn-sm btn-outline-warning" (click)="seleccionado = null">Volver</button>
       </div>
     </div>
 
-    <div class="col-md-7" *ngIf="seleccionado">
-      <div class="card border-primary shadow">
-        <div class="card-header bg-primary text-white d-flex justify-content-between">
-          <span>Registrar Salida: {{ seleccionado.transporte?.tracto }}</span>
-          <span class="badge bg-light text-primary">ID: #{{ seleccionado.id }}</span>
+    <div class="card-body p-4">
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <label class="form-label fw-bold">Disposicion del Equipo</label>
+          <input type="time" class="form-control border-primary" [(ngModel)]="formSalida.horaEquipoListoGreen">
         </div>
-        <div class="card-body">
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <label class="form-label fw-bold">Hora de Salida</label>
-              <input type="time" class="form-control" [(ngModel)]="formSalida.horaOutGreen">
-            </div>
-            <div class="col-md-6 mb-3">
-              <label class="form-label fw-bold">Litros Salida (Balanza)</label>
-              <input type="number" class="form-control" [(ngModel)]="formSalida.litrosOutGreen" placeholder="Ej: 27950">
-            </div>
-          </div>
-
-          <div class="alert alert-secondary py-2">
-            <small><strong>Control de stock:</strong> El camión ingresó a esta planta con {{ seleccionado.litrosInGreen }} litros.</small>
-          </div>
-
-          <button class="btn btn-primary w-100 mt-2" (click)="guardarSalida()">
-            <i class="bi bi-check-circle"></i> Confirmar Salida Definitiva
-          </button>
+        <div class="col-md-6">
+          <label class="form-label fw-bold">Hora Carga Biocombustible</label>
+          <input type="time" class="form-control border-primary" [(ngModel)]="formSalida.horaCargaBioGreen">
         </div>
       </div>
+
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <label class="form-label fw-bold">Hora de Salida de PGORD</label>
+          <input type="time" class="form-control border-primary" [(ngModel)]="formSalida.horaOutGreen">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label fw-bold text-success">Volumen Cargado (Lts)</label>
+          <input type="number" class="form-control form-control-lg border-success fw-bold"
+                 [(ngModel)]="formSalida.volCargadoGreen" placeholder="Ej: 27950">
+        </div>
+      </div>
+
+      <div class="alert alert-warning d-flex justify-content-between align-items-center" *ngIf="formSalida.volCargadoGreen">
+        <span><i class="bi bi-arrow-left-right me-2"></i> Diferencia vs Ingreso:</span>
+        <strong [class.text-danger]="(formSalida.volCargadoGreen - seleccionado.volDescargadoGreen!) < 0">
+          {{ (formSalida.volCargadoGreen - seleccionado.volDescargadoGreen!) | number:'1.0-0' }} Lts
+        </strong>
+      </div>
+
+      <div class="alert alert-info py-2" *ngIf="formSalida.volCargadoGreen">
+        <small>
+          <i class="bi bi-calculator me-1"></i> <strong>Estimación de Peso a Puerto:</strong>
+          El sistema proyecta un peso de salida de <strong>{{ (formSalida.volCargadoGreen * 1.13636) | number:'1.0-0' }} Kg</strong>.
+        </small>
+      </div>
+
+      <button class="btn btn-lg w-100 fw-bold shadow mt-3"
+              style="background-color: #FFC600; color: #0D2A1B;"
+              (click)="guardarSalida()"
+              [disabled]="!formSalida.horaOutGreen || !formSalida.volCargadoGreen">
+        CONFIRMAR SALIDA DE PGORD
+      </button>
     </div>
   </div>
 </div>

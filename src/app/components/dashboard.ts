@@ -19,57 +19,6 @@ import autoTable from 'jspdf-autotable';
   imports: [CommonModule, FormsModule, RouterLink], // <-- No olvides agregar RouterLink aquí
   template: `
    
-    <div *ngIf="seccionActiva === 'operaciones'" class="container mt-5">
-    <div class="text-center mb-5">
-        <h2 class="fw-bold" style="color: #0D2A1B;">REGISTRO DE ETAPAS</h2>
-        <p class="text-muted">Seleccione la etapa correspondiente a la logística</p>
-    </div>
-
-    <div class="row g-4">
-        <div class="col-md-6 col-lg-3">
-            <div class="card h-100 shadow-sm border-0 btn-posta"
-                 routerLink="/operacion-cremer" (click)="seccionActiva = 'inicio'">
-                <div class="card-body d-flex flex-column align-items-center justify-content-center p-4">
-                    <i class="bi bi-1-circle-fill display-4 mb-3" style="color: #FFC600;"></i>
-                    <h5 class="fw-bold text-white text-center">SALIDA<br>CREMER</h5>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-6 col-lg-3">
-            <div class="card h-100 shadow-sm border-0 btn-posta"
-                 routerLink="/operacion-green"
-                 (click)="seccionActiva = 'inicio'"
-                 style="cursor: pointer;">
-                <div class="card-body d-flex flex-column align-items-center justify-content-center p-4">
-                    <i class="bi bi-2-circle-fill display-4 mb-3" style="color: #FFC600;"></i>
-                    <h5 class="fw-bold text-white text-center">INGRESO<br>GREEN OIL</h5>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-6 col-lg-3">
-            <div class="card h-100 shadow-sm border-0 btn-posta"
-                 (click)="irAPosta('green-out')">
-                <div class="card-body d-flex flex-column align-items-center justify-content-center p-4">
-                    <i class="bi bi-3-circle-fill display-4 mb-3" style="color: #FFC600;"></i>
-                    <h5 class="fw-bold text-white text-center">SALIDA<br>GREEN OIL</h5>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-6 col-lg-3">
-            <div class="card h-100 shadow-sm border-0 btn-posta"
-                 (click)="irAPosta('puerto')">
-                <div class="card-body d-flex flex-column align-items-center justify-content-center p-4">
-                    <i class="bi bi-4-circle-fill display-4 mb-3" style="color: #FFC600;"></i>
-                    <h5 class="fw-bold text-white text-center">INGRESO<br>PUERTO</h5>
-                </div>
-            </div>
-        </div>
-    </div> </div>
-
-
    <div *ngIf="seccionActiva === 'inicio'" class="container mt-5 animate__animated animate__fadeIn">
 
 <div class="row mb-4 justify-content-center">
@@ -92,14 +41,20 @@ import autoTable from 'jspdf-autotable';
 
 <div class="col-sm-6 col-md-4 col-lg-3">
   <div class="access-card d-flex align-items-start p-3 h-100"
-       (click)="mostrarAlerta('Módulo de Operaciones en desarrollo para L4GA.')"
-       style="cursor: pointer; background-color: #FFC600; border-radius: 8px; border: none;">
+       routerLink="/operaciones"
+       style="cursor: pointer; background-color: #FFC600; border-radius: 8px; border: none; transition: transform 0.2s;">
+
     <div class="icon-container me-3 mt-1">
-      <img src="assets/Operaciones_Iconos.png" alt="Icono" style="height: 50px; width: auto;" class="animate__animated animate__fadeIn">
+      <img src="assets/Operaciones_Iconos.png" alt="Icono"
+           style="height: 50px; width: auto;"
+           class="animate__animated animate__fadeIn">
     </div>
+
     <div class="d-flex flex-column">
       <h3 class="card-title m-0 fw-bold" style="color: #0D2A1B; font-size: 1.15rem;">Operaciones</h3>
-      <p class="card-text m-0 mt-1 small" style="color: #0D2A1B; line-height: 1.25;">Gestión diaria.<br>Carga de datos.</p>
+      <p class="card-text m-0 mt-1 small" style="color: #0D2A1B; line-height: 1.25;">
+        Gestión diaria.<br>Carga de datos.
+      </p>
     </div>
   </div>
 </div>
@@ -203,7 +158,7 @@ import autoTable from 'jspdf-autotable';
 export class DashboardComponent implements OnInit {
   // CONFIGURACIÓN DE TIPOS EXPLÍCITA PARA EVITAR ERROR TS2367
   usuarioNombre: string = 'Usuario';
-  usuarioRol: string = 'Visor';
+  usuarioRol: string = 'Consulta';
   seccionActiva: string = 'inicio';
 
  
@@ -219,7 +174,7 @@ export class DashboardComponent implements OnInit {
   ngOnInit(): void {
     // Leemos del localStorage lo que seteó el login
     this.usuarioNombre = localStorage.getItem('userName') || 'Usuario';
-    this.usuarioRol = localStorage.getItem('userRol') || 'Visor';
+    this.usuarioRol = localStorage.getItem('userRol') || 'Consulta';
     this.seccionActiva = 'inicio';
   }
 

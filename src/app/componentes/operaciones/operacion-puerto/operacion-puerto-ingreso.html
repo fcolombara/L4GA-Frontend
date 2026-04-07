@@ -1,57 +1,92 @@
 <div class="container mt-4">
-  <h2 class="text-dark"><i class="bi bi-anchor text-warning"></i> Operación Puerto - Ingreso</h2>
-  <hr>
 
-  <div class="row">
-    <div class="col-md-5">
-      <h4 class="text-secondary">Unidades en Tránsito</h4>
-      <div class="list-group shadow-sm">
-        <button *ngFor="let op of camionesEnCamino"
-                (click)="seleccionar(op)"
-                [class.active]="seleccionado?.id === op.id"
-                class="list-group-item list-group-item-action border-warning-subtle">
-          <strong>Unidad: {{ op.transporte?.tracto }}</strong> <br>
-          <small class="text-muted">Chofer: {{ op.transporte?.chofer }}</small> <br>
-          <small>Salió de Green: {{ op.horaOutGreen }} | {{ op.litrosOutGreen }} Lts</small>
-        </button>
+  <div *ngIf="!seleccionado">
+    <div class="text-center mb-4">
+      <h3 class="fw-bold" style="color: #0D2A1B;"><i class="bi bi-anchor"></i> ETAPA 4 | REGISTRO INGRESO A PUERTO DE VILLETA</h3>
+      <p class="text-muted">Seleccione la unidad que arribó al puerto para registrar la recepción final</p>
+    </div>
+
+    <div class="row g-3">
+      <div class="col-md-6" *ngFor="let op of camionesEnCamino">
+        <div class="card shadow-sm border-0 hvr-grow" (click)="seleccionar(op)"
+             style="cursor: pointer; border-left: 5px solid #FFC600 !important; background-color: #f8f9fa;">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h4 class="fw-bold mb-0 text-dark">{{ op.transporte?.tracto }}</h4>
+                <span class="badge bg-info text-white">EN CAMINO</span>
+              </div>
+              <div class="text-end">
+                <p class="mb-0 fw-bold">{{ op.transporte?.chofer }}</p>
+                <small class="text-muted">Salió Green: {{ op.horaOutGreen }} hs</small> <br>
+                <small class="text-muted text-uppercase" style="font-size: 0.7rem;">Carga: {{ op.volCargadoGreen | number:'1.0-0' }} Lts</small>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div *ngIf="camionesEnCamino.length === 0" class="alert alert-info mt-3">
-        No hay camiones reportados en viaje al puerto.
+      <div class="col-12 text-center" *ngIf="camionesEnCamino.length === 0">
+        <div class="alert alert-light border shadow-sm">
+          <i class="bi bi-geo-alt text-warning display-6"></i>
+          <p class="mt-2 mb-0">No hay camiones reportados en viaje hacia el puerto en este momento.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="seleccionado" class="card shadow border-0">
+    <div class="card-header text-white px-4 py-3" style="background-color: #0D2A1B;">
+      <div class="d-flex justify-content-between align-items-center">
+        <span>Finalizando Operación: <strong>{{ seleccionado.transporte?.tracto }}</strong></span>
+        <button class="btn btn-sm btn-outline-warning" (click)="seleccionado = null">Volver</button>
       </div>
     </div>
 
-    <div class="col-md-7" *ngIf="seleccionado">
-      <div class="card border-warning shadow">
-        <div class="card-header bg-warning text-dark fw-bold">
-          Registrar Arribo: {{ seleccionado.transporte?.tracto }}
+    <div class="card-body p-4">
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <label class="form-label fw-bold">Hora Arribo Puerto</label>
+          <input type="time" class="form-control border-warning" [(ngModel)]="formPuerto.horaArriboPuerto">
         </div>
-        <div class="card-body">
-          <div class="row">
-            <div class="col-md-4 mb-3">
-              <label class="form-label fw-bold">Hora Ingreso</label>
-              <input type="time" class="form-control" [(ngModel)]="formPuerto.horaInPuerto">
-            </div>
-            <div class="col-md-4 mb-3">
-              <label class="form-label fw-bold">Peso Puerto (Kg)</label>
-              <input type="number" class="form-control" [(ngModel)]="formPuerto.pesoInPuerto" placeholder="Balanza">
-            </div>
-            <div class="col-md-4 mb-3">
-              <label class="form-label fw-bold">Litros Puerto</label>
-              <input type="number" class="form-control" [(ngModel)]="formPuerto.litrosInPuerto" placeholder="Volumen">
-            </div>
-          </div>
-
-          <div class="alert alert-light border py-2">
-            <i class="bi bi-info-circle text-primary"></i>
-            <small> El camión salió de planta con <strong>{{ seleccionado.litrosOutGreen }}</strong> litros.</small>
-          </div>
-
-          <button class="btn btn-warning w-100 mt-2 fw-bold" (click)="guardarIngresoPuerto()">
-            <i class="bi bi-check-all"></i> Confirmar Recepción en Puerto
-          </button>
+        <div class="col-md-6">
+          <label class="form-label fw-bold">Hora de ingreso Unidad Puerto</label>
+          <input type="time" class="form-control border-primary" [(ngModel)]="formPuerto.horaInUnidadPuerto">
         </div>
       </div>
+
+      <div class="row mb-4">
+        <div class="col-md-4">
+          <label class="form-label fw-bold">Pesaje Bruto (Kg)</label>
+          <input type="number" class="form-control border-secondary" [(ngModel)]="formPuerto.pesajePuerto" placeholder="Balanza Puerto">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label fw-bold text-success">Peso Recibido (Kg)</label>
+          <input type="number" class="form-control form-control-lg border-success fw-bold text-success" [(ngModel)]="formPuerto.pesoRecibidoPuerto" placeholder="Neto">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label fw-bold text-success">Litros Puerto</label>
+          <input type="number" class="form-control form-control-lg border-success fw-bold text-success" [(ngModel)]="formPuerto.litrosRecibidosPuerto" placeholder="Volumen">
+        </div>
+      </div>
+
+      <div class="alert alert-warning d-flex justify-content-between align-items-center border-warning" *ngIf="formPuerto.litrosRecibidosPuerto">
+        <span><i class="bi bi-droplet-half me-2"></i> Control de Merma (vs Planta):</span>
+        <strong [class.text-danger]="(formPuerto.litrosRecibidosPuerto - seleccionado.volCargadoGreen!) < 0">
+          {{ (formPuerto.litrosRecibidosPuerto - seleccionado.volCargadoGreen!) | number:'1.0-0' }} Lts
+        </strong>
+      </div>
+
+      <div class="alert alert-secondary py-2" *ngIf="!formPuerto.litrosRecibidosPuerto">
+        <small><i class="bi bi-info-circle me-1"></i> La unidad salió de Green Oil con un despacho de <strong>{{ seleccionado.volCargadoGreen }} Lts</strong>.</small>
+      </div>
+
+      <button class="btn btn-lg w-100 fw-bold shadow mt-3"
+              style="background-color: #FFC600; color: #0D2A1B;"
+              (click)="guardarPuerto()"
+              [disabled]="!formPuerto.horaArriboPuerto || !formPuerto.litrosRecibidosPuerto">
+        <i class="bi bi-check-all"></i> CONFIRMAR RECEPCIÓN EN PUERTO
+      </button>
     </div>
   </div>
 </div>

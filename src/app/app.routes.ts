@@ -12,7 +12,12 @@ import { UsuariosComponent } from './components/usuarios/usuarios';
 import { TransporteMenuComponent } from './componentes/transporte/transporte-menu/transporte-menu';
 import { TransporteComponent } from './componentes/transporte/transporte';
 import { NominaComponent } from './componentes/nomina/nomina';
-// Nota: Si ya creaste el TransporteMenuComponent (el de los 2 botones), importalo también.
+
+// AGREGAR ESTA LÍNEA (Asegurate que la ruta al archivo sea la correcta)
+import { OperacionHomeComponent } from './componentes/operaciones/operacion-home/operacion-home';
+import { RegistroEtapas } from './componentes/operaciones/registro-etapas/registro-etapas';
+import { ConsultaOperacionesComponent } from './componentes/operaciones/consulta-operaciones/consulta-operaciones';
+import { SeguimientoOperacionesComponent } from './componentes/operaciones/seguimiento-operaciones/seguimiento-operaciones.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -22,33 +27,38 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
 
-  // --- RUTAS DE TRANSPORTE NUEVAS ---
+  // --- RUTAS DE OPERACIONES ---
   {
-    path: 'transporte/nomina',
-    component: TransporteComponent,
+    path: 'operaciones',
+    component: OperacionHomeComponent, // <--- ACÁ TENÉS QUE AGREGAR "Component"
     canActivate: [authGuard]
   },
-  {
-    path: 'transporte/asignacion',
-    component: NominaComponent,
-    canActivate: [authGuard]
-  },
-  // Si querés que al hacer clic en "Transporte" se vea el menú de 2 botones:
-  // { path: 'transporte', component: TransporteMenuComponent, canActivate: [authGuard] },
-
+  { path: 'operaciones/registro', component: RegistroEtapas, canActivate: [authGuard] },
+  
   {
     path: 'operacion-cremer',
     component: OperacionCremerComponent,
     canActivate: [authGuard]
   },
-  { path: 'ingreso-puerto', component: OperacionPuertoIngresoComponent },
   {
     path: 'operacion-green',
     component: OperacionGreenComponent,
     canActivate: [authGuard]
   },
-  { path: 'salida-green', component: OperacionGreenSalidaComponent },
-  { path: 'usuarios', component: UsuariosComponent, canActivate: [authGuard] },
+  { path: 'seguimiento-operaciones', component: SeguimientoOperacionesComponent },
+  {
+    path: 'salida-green',
+    component: OperacionGreenSalidaComponent,
+    canActivate: [authGuard]
+  },
+  {
+    path: 'ingreso-puerto',
+    component: OperacionPuertoIngresoComponent,
+    canActivate: [authGuard]
+  },
+  { path: 'consultar-operaciones', component: ConsultaOperacionesComponent },
+
+  // --- RUTAS DE TRANSPORTE ---
   {
     path: 'transporte',
     component: TransporteMenuComponent,
@@ -65,6 +75,9 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
 
+  { path: 'usuarios', component: UsuariosComponent, canActivate: [authGuard] },
+
+  // Redirecciones
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: '**', redirectTo: '/login' },
 ];

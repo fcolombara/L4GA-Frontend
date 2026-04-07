@@ -1,0 +1,150 @@
+<div class="container mt-4">
+  <div class="d-flex align-items-center mb-1">
+    <img src="assets/Operaciones_Iconos.png" alt="Icono"
+         style="height: 50px; width: auto;"
+         class="animate__animated animate__fadeIn me-3">
+    <div>
+      <h2 class="mb-0 fw-bold" style="color: #0D2A1B;">Operaciones > Seguimiento de Operaciones</h2>
+      <p class="text-muted mb-0">Seleccione la operación que desea seguir.</p>
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-between align-items-center mt-4 px-3 py-2"
+       style="background-color: #0D2A1B; color: #FFC600; border-radius: 4px 4px 0 0;">
+    <h5 class="mb-0 fw-bold" style="letter-spacing: 1px;">OPERACIONES EN CURSO</h5>
+    <span class="fw-bold">{{ hoy | date:'dd/MM/yyyy' }}</span>
+  </div>
+
+  <div class="p-4 border border-top-0 shadow-sm"
+       style="background-color: #D9D9D9; border-radius: 0 0 4px 4px; min-height: 300px;">
+
+    <div class="row g-3">
+      <div class="col-md-4 col-lg-3" *ngFor="let op of operacionesEnCurso">
+        <div class="card card-seguimiento shadow-sm border-0 h-100">
+          <div class="card-body p-3">
+            <h5 class="fw-bold mb-0 text-dark">{{ op.transporte?.tracto }}</h5>
+            <small class="text-muted text-uppercase d-block mb-3" style="font-size: 0.75rem;">
+              {{ op.transporte?.chofer }}
+            </small>
+
+            <div class="mb-4">
+              <span class="d-block text-estado text-uppercase fw-bold" style="color: #0D2A1B; font-size: 0.7rem;">
+                ESTADO
+              </span>
+              <span class="h6 fw-bold text-dark d-block" style="min-height: 2.5rem; line-height: 1.2;">
+                {{ obtenerEstadoTexto(op) }}
+              </span>
+            </div>
+
+            <div class="d-flex gap-2">
+              <div class="d-flex gap-2">
+                <button class="btn w-100 py-1 fw-bold"
+                        [ngClass]="op.trackingLink ? 'btn-l4ga' : 'btn-outline-secondary'"
+                        (click)="irAlTracking(op)">
+                  <i class="bi" [ngClass]="op.trackingLink ? 'bi-geo-alt-fill' : 'bi-plus-circle'"></i>
+                  {{ op.trackingLink ? 'TRACKING' : 'LINK GPS' }}
+                </button>
+                <button class="btn btn-l4ga w-100 py-1" (click)="verDetalle(op)">
+                  VER
+                </button>
+              </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 text-center py-5" *ngIf="operacionesEnCurso.length === 0">
+        <i class="bi bi-truck-flatbed display-4 text-muted"></i>
+        <p class="text-muted mt-2 italic">No hay unidades en curso actualmente.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="detalleModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg">
+
+      <div class="modal-header text-white border-0" style="background-color: #0D2A1B;">
+        <h5 class="modal-title fw-bold">
+          <i class="bi bi-truck me-2"></i>Hoja de Ruta: {{ seleccionado?.transporte?.tracto }}
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body p-4" style="background-color: #f4f7f6;">
+        <div class="row g-3" *ngIf="seleccionado">
+
+          <div class="col-md-3">
+            <div class="card h-100 border-0 shadow-sm border-top border-4 border-primary">
+              <div class="card-header bg-white py-1 small fw-bold text-primary text-uppercase">1. Origen Cremer</div>
+              <div class="card-body">
+                <p class="small mb-1 text-muted">Salida Planta:</p>
+                <h6 class="fw-bold">{{ seleccionado.horaOutCremer || '--:--' }} hs</h6>
+                <hr class="my-2">
+                <p class="small mb-0"><strong>Carga:</strong> {{ seleccionado.litrosCremer | number:'1.0-0' }} Lts</p>
+                <p class="small mb-0"><strong>Fecha:</strong> {{ seleccionado.fecha | date:'dd/MM/yy' }}</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-3">
+            <div class="card h-100 border-0 shadow-sm border-top border-4 border-success">
+              <div class="card-header bg-white py-1 small fw-bold text-success text-uppercase">2. Ingreso PGORD</div>
+              <div class="card-body">
+                <div *ngIf="seleccionado.horaArriboGreen; else pendIn">
+                  <p class="small mb-1 text-muted">Arribo a Planta:</p>
+                  <h6 class="fw-bold">{{ seleccionado.horaArriboGreen }} hs</h6>
+                  <hr class="my-2">
+                  <p class="small mb-0"><strong>Descarga:</strong> {{ seleccionado.volDescargadoGreen | number:'1.0-0' }} Lts</p>
+                </div>
+                <ng-template #pendIn><p class="text-muted small italic py-3">Esperando arribo...</p></ng-template>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-3">
+            <div class="card h-100 border-0 shadow-sm border-top border-4 border-info">
+              <div class="card-header bg-white py-1 small fw-bold text-info text-uppercase">3. Salida PGORD</div>
+              <div class="card-body">
+                <div *ngIf="seleccionado.horaOutGreen; else pendOut">
+                  <p class="small mb-1 text-muted">Salida Definitiva:</p>
+                  <h6 class="fw-bold">{{ seleccionado.horaOutGreen }} hs</h6>
+                  <hr class="my-2">
+                  <p class="small mb-0"><strong>Cargado:</strong> {{ seleccionado.volCargadoGreen | number:'1.0-0' }} Lts</p>
+                </div>
+                <ng-template #pendOut><p class="text-muted small italic py-3">En proceso de carga...</p></ng-template>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-3">
+            <div class="card h-100 border-0 shadow-sm border-top border-4 border-warning">
+              <div class="card-header bg-white py-1 small fw-bold text-warning text-uppercase">4. Puerto Villeta</div>
+              <div class="card-body">
+                <div *ngIf="seleccionado.horaArriboPuerto; else pendPuerto">
+                  <p class="small mb-1 text-muted">Llegada a Puerto:</p>
+                  <h6 class="fw-bold">{{ seleccionado.horaArriboPuerto }} hs</h6>
+                  <hr class="my-2">
+                  <p class="small mb-0"><strong>Neto:</strong> {{ seleccionado.pesoRecibidoPuerto | number:'1.0-0' }} Kg</p>
+                </div>
+                <ng-template #pendPuerto><p class="text-muted small italic py-3">En tránsito...</p></ng-template>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 mt-3">
+            <div class="alert alert-dark mb-0 py-2 shadow-sm border-0 d-flex justify-content-between align-items-center">
+              <small class="fw-bold text-uppercase">Responsable: {{ seleccionado.transporte?.chofer }}</small>
+              <span class="badge bg-warning text-dark px-3">{{ obtenerEstadoTexto(seleccionado) }}</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="modal-footer border-0 bg-light">
+        <button type="button" class="btn btn-secondary px-4 fw-bold" data-bs-dismiss="modal">CERRAR</button>
+      </div>
+    </div>
+  </div>
+</div>

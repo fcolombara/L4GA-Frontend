@@ -1,0 +1,79 @@
+<div class="container-fluid mt-4">
+  <div class="mb-2">
+    <button class="btn btn-sm btn-outline-secondary border-0 d-flex align-items-center" routerLink="/operaciones">
+      <span class="me-1">←</span> Volver a Operaciones
+    </button>
+  </div>
+  <div class="icon-container me-3 mt-1">
+    <div class="d-flex align-items-center mb-4">
+      <img src="assets/Operaciones_Iconos.png" alt="Icono"
+           style="height: 50px; width: auto;"
+           class="animate__animated animate__fadeIn me-3"> <h2 class="mb-0">Operaciones > Historial de Operaciones</h2>
+    </div>
+
+  <div class="row mb-3 p-3 bg-light border rounded shadow-sm">
+    <div class="col-md-2">
+      <label class="fw-bold">Desde:</label>
+      <input type="date" class="form-control" [(ngModel)]="fechaDesde" (change)="aplicarFiltros()">
+    </div>
+
+    <div class="col-md-2">
+      <label class="fw-bold">Hasta:</label>
+      <input type="date" class="form-control" [(ngModel)]="fechaHasta" (change)="aplicarFiltros()">
+    </div>
+
+    <div class="col-md-5">
+      <label class="fw-bold">Buscar por Tracto:</label>
+      <input type="text" class="form-control" placeholder="Patente o Unidad..."
+             [(ngModel)]="tractoFiltro" (input)="aplicarFiltros()">
+    </div>
+
+    <div class="col-md-3 d-flex align-items-end">
+      <button class="btn btn-success w-100 fw-bold" (click)="exportarPDF()">
+        <span class="me-2">📄</span> Exportar a PDF
+      </button>
+    </div>
+  </div>
+
+  <div class="table-responsive shadow-sm">
+    <table class="table table-sm table-bordered table-hover align-middle">
+      <thead class="table-dark text-center">
+        <tr>
+          <th>ID</th>
+          <th>Fecha</th>
+          <th>Transporte / Chofer</th>
+          <th>Cremer (Salida)</th>
+          <th>PGORD (Ingreso)</th>
+          <th>PGORD (Salida)</th>
+          <th>Puerto (Ingreso)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let op of filtradas" class="text-center">
+          <td class="fw-bold">#{{ op.id }}</td>
+          <td>{{ op.fecha | date:'dd/MM/yyyy' }}</td>
+          <td class="text-start">
+            <span class="badge bg-info text-dark">{{ op.transporte?.tracto }}</span><br>
+            <small>{{ op.transporte?.chofer }}</small>
+          </td>
+          <td>
+            <div class="small">{{ op.horaOutCremer }}</div>
+            <div class="fw-bold text-primary">{{ op.litrosCremer }} Lts</div>
+          </td>
+          <td>
+            <div class="small">{{ op.horaArriboGreen || '--:--' }}</div>
+            <div class="fw-bold text-success">{{ op.volCargadoGreen || 0 }} Lts</div>
+          </td>
+          <td>
+            <div class="small">{{ op.horaOutGreen || '--:--' }}</div>
+            <div class="fw-bold">{{ op.volDescargadoGreen || 0 }} Lts</div>
+          </td>
+          <td>
+            <div class="small">{{ op.horaArriboPuerto || '--:--' }}</div>
+            <div class="fw-bold text-danger">{{ op.pesoRecibidoPuerto || 0 }} Kg</div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

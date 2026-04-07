@@ -7,20 +7,33 @@ export interface Operacion {
   transporte?: Transporte;
   trackingLink?: string;
 
-  // Cremer
+  // --- ETAPA 1: SALIDA CREMER ---
+  horaArriboCremer?: string;
+  horaCargaNeutroCremer?: string;
   horaOutCremer?: string;
-  pesoCremer?: number;
-  litrosCremer?: number;
   taraCremer?: number;
+  pesoCargadoCremer?: number; // Antes era pesoCremer
+  pesoTotalCremer?: number;
+  litrosCremer?: number; // Calculado al 92% en el Back
 
-  // Green Oil
-  horaInGreen?: string;
-  litrosInGreen?: number;
+  // --- ETAPA 2: INGRESO GREEN OIL ---
+  horaArriboGreen?: string;
+  horaInPlantaGreen?: string;
+  horaDescargaGreen?: string;
+  volDescargadoGreen?: number; // Antes era litrosInGreen
+  pesoGreenIngreso?: number;   // Calculado al 108.695% en el Back
+
+  // --- ETAPA 3: SALIDA GREEN OIL ---
+  horaEquipoListoGreen?: string;
+  horaCargaBioGreen?: string;
   horaOutGreen?: string;
-  litrosOutGreen?: number;
+  volCargadoGreen?: number;    // Antes era litrosOutGreen
+  pesoGreenEgreso?: number;    // Calculado al 113.636% en el Back
 
-  // Puerto
-  horaInPuerto?: string;
-  pesoInPuerto?: number;
-  litrosInPuerto?: number;
+  // --- ETAPA 4: INGRESO A PUERTO ---
+  horaArriboPuerto?: string;
+  horaInUnidadPuerto?: string;
+  pesajePuerto?: number;       // El bruto de balanza en puerto
+  pesoRecibidoPuerto?: number; // Neto
+  litrosRecibidosPuerto?: number; // Calculado al 88% en el Back
 }

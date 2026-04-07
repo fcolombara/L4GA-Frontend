@@ -1,0 +1,44 @@
+.header-barra {
+  background-color: #0D2A1B;
+  color: #FFC600;
+  border-radius: 6px 6px 0 0;
+  padding: 10px 20px;
+}
+
+.contenedor-gris {
+  background-color: #E9ECEF; // El gris de fondo de la imagen
+  padding: 20px;
+  border-radius: 0 0 6px 6px;
+  min-height: 200px;
+}
+
+.card-seguimiento {
+  background: white;
+  border: none;
+  border-left: 5px solid #FFC600 !important;
+  border-radius: 4px;
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  }
+
+  .btn-l4ga {
+    background-color: #FFC600;
+    color: #0D2A1B;
+    font-weight: bold;
+    font-size: 0.75rem;
+    border: none;
+
+    &:hover {
+      background-color: #e6b300;
+    }
+  }
+}
+
+.text-estado {
+  font-style: italic;
+  font-size: 0.85rem;
+  color: #6c757d;
+}

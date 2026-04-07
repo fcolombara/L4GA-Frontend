@@ -15,7 +15,7 @@ import { filter } from 'rxjs/operators';
       <div class="container-fluid px-4">
         
         <a class="navbar-brand d-flex align-items-center" routerLink="/dashboard">
-      <img src="/assets/Main_logo.png"
+      <img src="/assets/By_L4GA.png"
      alt="L4GA"
      style="height: 40px; width: auto;"
      class="d-inline-block align-text-top me-2">
@@ -31,11 +31,12 @@ import { filter } from 'rxjs/operators';
               <a class="nav-link text-white fw-light px-3 mt-2" routerLink="/dashboard" routerLinkActive="active-link">Inicio</a>
             </li>
             <li class="nav-item">
-<a class="nav-link text-white fw-light px-3 mt-2"
-style="cursor: pointer;"
-(click)="$event.preventDefault(); mostrarAlerta('El módulo de Operaciones se encuentra en desarrollo.')">
-Operaciones (Próximamente)
-</a>
+  <a class="nav-link text-white fw-light px-3 mt-2"
+     routerLink="/operaciones"
+     routerLinkActive="active-link"
+     style="cursor: pointer;">
+    Operaciones
+  </a>
 </li>
             <li class="nav-item" *ngIf="esAdmin || esOperario">
               <a class="nav-link text-white fw-light px-3 mt-2" routerLink="/transporte" routerLinkActive="active-link">Transporte</a>

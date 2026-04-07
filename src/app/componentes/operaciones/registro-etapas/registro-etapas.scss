@@ -1,0 +1,17 @@
+.btn-posta {
+  background-color: #0D2A1B; // El verde oscuro de L4GA
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 12px;
+
+  &:hover {
+    transform: translateY(-8px);
+    background-color: #16412a;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2) !important;
+  }
+
+  h5 {
+    letter-spacing: 1px;
+    font-size: 1.1rem;
+  }
+}

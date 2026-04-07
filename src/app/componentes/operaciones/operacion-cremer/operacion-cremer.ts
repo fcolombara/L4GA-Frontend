@@ -16,16 +16,17 @@ import { Router } from '@angular/router';
 export class OperacionCremerComponent implements OnInit {
   listaTransportes: Transporte[] = [];
 
-  // 1. Agregamos usuarioId: 1 por defecto para que no sea undefined
-  op: any = {
+  // Inicializamos con los nuevos nombres de la interface
+  op: Operacion = {
     fecha: new Date().toISOString().split('T')[0],
     transporteId: 0,
-    usuarioId: 1, // <--- ID del operador de Santa Fe
+    horaArriboCremer: '',
+    horaCargaNeutroCremer: '',
     horaOutCremer: '',
-    pesoCremer: 0,
+    pesoCargadoCremer: 0,
     taraCremer: 0,
-    litrosCremer: 0,
-    estado: 'Salida Cremer'
+    pesoTotalCremer: 0,
+    litrosCremer: 0
   };
 
   constructor(
@@ -42,49 +43,53 @@ export class OperacionCremerComponent implements OnInit {
   }
 
   calcularLitros() {
-    if (this.op.pesoCremer && this.op.pesoCremer > 0) {
-      const factor = 0.92;
-      this.op.litrosCremer = Math.round(this.op.pesoCremer / factor);
+    if (this.op.pesoCargadoCremer && this.op.pesoCargadoCremer > 0) {
+      // El peso es el 100%, los litros son el 92%
+      // Usamos toFixed(3) para ser consistentes con la DB
+      const calculo = this.op.pesoCargadoCremer * 0.92;
+      this.op.litrosCremer = Number(calculo.toFixed(3));
     } else {
       this.op.litrosCremer = 0;
     }
   }
 
   registrarSalida() {
-    // 2. Validación rápida: evitar mandar transporteId en 0
     if (!this.op.transporteId || this.op.transporteId === 0) {
       alert("Debe seleccionar un transporte (patente).");
       return;
     }
 
-    // 3. Mapeo limpio para C#
-    const dataParaEnviar = {
-      fecha: this.op.fecha,
+    // Mapeo para enviar al Backend (C#)
+    // Aseguramos que las horas tengan el formato HH:mm:ss que pide TimeSpan
+    const dataParaEnviar: Operacion = {
+      ...this.op,
       transporteId: Number(this.op.transporteId),
-      usuarioId: Number(this.op.usuarioId) || 1,
-      litrosCremer: Number(this.op.litrosCremer) || 0,
-      pesoCremer: Number(this.op.pesoCremer) || 0,
-      taraCremer: Number(this.op.taraCremer) || 0,
-      horaOutCremer: this.op.horaOutCremer.includes(':') && this.op.horaOutCremer.length === 5
-        ? `${this.op.horaOutCremer}:00`
-        : this.op.horaOutCremer,
-      estado: 'Salida Cremer',
-      // IMPORTANTE: Mandar estos como null para evitar conflictos de navegación en EF
-      transporte: null,
-      usuario: null
+      // Formateo de horas para evitar errores de validación en el Back
+      horaArriboCremer: this.formatTime(this.op.horaArriboCremer),
+      horaCargaNeutroCremer: this.formatTime(this.op.horaCargaNeutroCremer),
+      horaOutCremer: this.formatTime(this.op.horaOutCremer),
+      // Limpiamos objetos circulares
+      transporte: undefined
     };
 
-    console.log("Enviando datos al Backend:", dataParaEnviar);
+    console.log("Enviando datos a la API (Etapa 1):", dataParaEnviar);
 
     this.operacionService.registrarSalida(dataParaEnviar).subscribe({
-      next: (res: any) => { // <--- Agregamos ": any" explícitamente
-        alert("¡Operación registrada con éxito en Cremer!");
+      next: () => {
+        alert("¡Salida de Cremer registrada con éxito!");
         this.router.navigate(['/dashboard']);
       },
-      error: (err: any) => { // <--- Agregamos ": any" acá también
-        console.error("Detalle del error:", err);
-        alert("Error de validación. Revisá la consola.");
+      error: (err) => {
+        console.error("Error en el registro:", err);
+        alert("Error al registrar. Verificá que todos los campos sean correctos.");
       }
     });
+  }
+
+  // Helper para asegurar formato HH:mm:ss
+  private formatTime(time?: string): string | undefined {
+    if (!time) return undefined;
+    if (time.length === 5) return `${time}:00`;
+    return time;
   }
 }

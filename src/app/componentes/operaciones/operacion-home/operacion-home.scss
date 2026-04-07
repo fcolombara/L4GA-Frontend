@@ -1,0 +1,28 @@
+.operation-card {
+  background-color: #FFC600; // Amarillo L4GA
+  color: #0D2A1B; // Verde oscuro L4GA
+  min-height: 220px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  border-radius: 4px; // Bordes sutiles como en la foto
+
+  h2 {
+    font-size: 1.7rem;
+    letter-spacing: -0.5px;
+  }
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.1) !important;
+    filter: brightness(95%);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.icon-circle i {
+  /* Si usás Bootstrap Icons, esto le da el grosor justo */
+  -webkit-text-stroke: 1px;
+}

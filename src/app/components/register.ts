@@ -16,7 +16,7 @@ export class RegisterComponent {
     nombre: '',
     email: '',
     passwordHash: '',
-    rol: 'Visor' // Rol por defecto
+    rol: 'Consulta' // Rol por defecto
   };
 
   constructor(private authService: AuthService, private router: Router) { }

@@ -1,7 +1,7 @@
 <div class="container mt-4">
   <div class="card shadow">
     <div class="card-header bg-dark text-white d-flex align-items-center">
-      <h4 class="mb-0">PUESTO 1: REGISTRO SALIDA CREMER</h4>
+      <h4 class="mb-0">ETAPA 1: REGISTRO SALIDA CREMER</h4>
     </div>
 
     <div class="card-body">
@@ -13,7 +13,7 @@
           </div>
 
           <div class="col-md-6 mb-3">
-            <label class="form-label fw-bold text-primary">Patente de Tracto</label>
+            <label class="form-label fw-bold text-primary">Equipo</label>
             <select [(ngModel)]="op.transporteId" name="transporteId" class="form-select border-primary" required>
               <option [value]="0" disabled>-- Seleccione Camión --</option>
               <option *ngFor="let t of listaTransportes" [value]="t.id">
@@ -25,24 +25,39 @@
 
         <div class="row">
           <div class="col-md-4 mb-3">
-            <label class="form-label fw-bold">Hora Out Cremer</label>
-            <input type="time" [(ngModel)]="op.horaOutCremer" name="hora" class="form-control" required>
+            <label class="form-label fw-bold">Hora Arribo</label>
+            <input type="time" [(ngModel)]="op.horaArriboCremer" name="horaArribo" class="form-control">
           </div>
-
           <div class="col-md-4 mb-3">
-            <label class="form-label fw-bold">Tara del Transporte (Kg)</label>
+            <label class="form-label fw-bold">Hora Carga Neutro</label>
+            <input type="time" [(ngModel)]="op.horaCargaNeutroCremer" name="horaCarga" class="form-control">
+          </div>
+          <div class="col-md-4 mb-3">
+            <label class="form-label fw-bold">Hora Salida</label>
+            <input type="time" [(ngModel)]="op.horaOutCremer" name="horaOut" class="form-control" required>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-4 mb-3">
+            <label class="form-label fw-bold">Tara (Kg)</label>
             <input type="number" [(ngModel)]="op.taraCremer" name="tara" class="form-control" placeholder="0">
           </div>
 
           <div class="col-md-4 mb-3">
-            <label class="form-label fw-bold text-success">Peso Neto Cremer (Kg)</label>
-            <input type="number" [(ngModel)]="op.pesoCremer" (input)="calcularLitros()" name="peso" class="form-control border-success fw-bold" placeholder="0">
+            <label class="form-label fw-bold text-success">Pesaje Cargado (Kg)</label>
+            <input type="number" [(ngModel)]="op.pesoCargadoCremer" (input)="calcularLitros()" name="pesoCargado" class="form-control border-success fw-bold" placeholder="0">
+          </div>
+
+          <div class="col-md-4 mb-3">
+            <label class="form-label fw-bold">Peso Total Bruto (Kg)</label>
+            <input type="number" [(ngModel)]="op.pesoTotalCremer" name="pesoTotal" class="form-control" placeholder="0">
           </div>
         </div>
 
         <div class="alert alert-secondary mt-2 d-flex justify-content-between shadow-sm">
-          <span><strong>Cálculo estimado:</strong> Litros basados en peso cargado.</span>
-          <span class="h5 mb-0 text-primary">{{ op.litrosCremer }} Lts</span>
+          <span><strong>Cálculo estimado:</strong> Litros basados en peso cargado (92%).</span>
+          <span class="h5 mb-0 text-primary">{{ op.litrosCremer | number:'1.1-3' }} Lts</span>
         </div>
 
         <hr>
@@ -50,7 +65,7 @@
           <button type="button" class="btn btn-secondary" (click)="f.resetForm()">Limpiar</button>
           <button type="button" class="btn btn-primary btn-lg px-5"
                   (click)="registrarSalida()"
-                  [disabled]="op.transporteId === 0 || !op.pesoCremer">
+                  [disabled]="op.transporteId === 0 || !op.pesoCargadoCremer">
             GENERAR SALIDA
           </button>
         </div>

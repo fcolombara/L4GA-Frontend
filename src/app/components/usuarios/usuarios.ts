@@ -24,7 +24,7 @@ export class UsuariosComponent implements OnInit {
         Nombre: '',
         Email: '',
         PasswordHash: '',
-        Rol: 'Visor'
+        Rol: 'Consulta'
     };
 
     ngOnInit(): void {
@@ -57,7 +57,7 @@ export class UsuariosComponent implements OnInit {
         if (!this.mostrarFormUsuario) {
             this.editando = false;
             this.usuarioIdEditando = null;
-            this.nuevoUsuario = { Nombre: '', Email: '', PasswordHash: '', Rol: 'Visor' };
+            this.nuevoUsuario = { Nombre: '', Email: '', PasswordHash: '', Rol: 'Consulta' };
         }
     }
 

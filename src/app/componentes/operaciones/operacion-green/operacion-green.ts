@@ -12,14 +12,16 @@ import { Router } from '@angular/router';
   templateUrl: './operacion-green.html'
 })
 export class OperacionGreenComponent implements OnInit {
-  operacionesPendientes: any[] = []; // Usamos any para incluir datos del Tracto/Chofer
-  operacionSeleccionada: any = null;
+  operacionesPendientes: Operacion[] = [];
+  operacionSeleccionada: Operacion | null = null;
   paso: number = 1; // 1: Seleccionar Camión, 2: Cargar Datos
 
-  // Datos para el ingreso
+  // Objeto para capturar los datos del formulario (Etapa 2)
   ingreso = {
-    horaInGreen: '',
-    litrosInGreen: 0
+    horaArriboGreen: '',
+    horaInPlantaGreen: '',
+    horaDescargaGreen: '',
+    volDescargadoGreen: 0
   };
 
   constructor(private operacionService: OperacionService, private router: Router) { }
@@ -29,36 +31,46 @@ export class OperacionGreenComponent implements OnInit {
   }
 
   cargarPendientes() {
-    // Llamamos al servicio para traer operaciones que NO tengan horaInGreen
+    // Traemos camiones que salieron de Cremer pero no entraron a Green
     this.operacionService.getOperacionesPendientesGreen().subscribe({
       next: (res) => this.operacionesPendientes = res,
       error: (err) => console.error("Error al traer pendientes", err)
     });
   }
 
-  seleccionar(op: any) {
+  seleccionar(op: Operacion) {
     this.operacionSeleccionada = op;
-    this.paso = 2; // Pasamos a la carga de datos
+    this.paso = 2;
   }
 
-  // En operacion-green.ts
   guardarIngreso() {
-    // Forzamos a que sea un número entero
+    if (!this.operacionSeleccionada) return;
+
     const idLimpio = Number(this.operacionSeleccionada.id);
 
+    // Armamos el objeto tal cual es la clase Operacion.cs
     const payload = {
-      horaInGreen: this.ingreso.horaInGreen.length === 5 ? `${this.ingreso.horaInGreen}:00` : this.ingreso.horaInGreen,
-      litrosInGreen: Number(this.ingreso.litrosInGreen)
+      Id: idLimpio,
+      HoraArriboGreen: this.formatTime(this.ingreso.horaArriboGreen),
+      HoraInPlantaGreen: this.formatTime(this.ingreso.horaInPlantaGreen),
+      HoraDescargaGreen: this.formatTime(this.ingreso.horaDescargaGreen),
+      VolDescargadoGreen: Number(this.ingreso.volDescargadoGreen)
     };
 
-    // Usamos el ID limpio sin dos puntos ni nada extra
     this.operacionService.actualizarIngresoGreen(idLimpio, payload).subscribe({
       next: () => {
-        alert('¡Ingreso registrado en Paraguay!');
+        alert('¡Guardado con éxito!');
         this.router.navigate(['/dashboard']);
       },
-      error: (err) => console.error('Error al guardar:', err)
+      error: (err) => {
+        console.error("Error detallado:", err);
+      }
     });
   }
-  
+
+  private formatTime(time?: string): string | undefined {
+    if (!time) return undefined;
+    // Si viene "14:30", lo transforma en "14:30:00"
+    return time.length === 5 ? `${time}:00` : time;
+  }
 }
