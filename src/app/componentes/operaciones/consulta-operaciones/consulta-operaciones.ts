@@ -69,12 +69,12 @@ export class ConsultaOperacionesComponent implements OnInit {
       op.litrosCremer || 0,
       op.volCargadoGreen || 0,
       op.volDescargadoGreen || 0,
-      op.pesoRecibidoPuerto || 0
+      op.litrosRecibidosPuerto || 0
     ]);
 
     autoTable(doc, {
       startY: 35,
-      head: [['ID', 'Fecha', 'Tracto', 'Chofer', 'Cremer (L)', 'Green In', 'Green Out', 'Puerto (Kg)']],
+      head: [['ID', 'Fecha', 'Tracto', 'Chofer', 'Cremer (Lts)', 'PGORD In (Lts)', 'PGORD Out (Lts)', 'Puerto (Lts)']],
       body: filas as any[], // El 'as any[]' ayuda a jspdf-autotable a no renegar con los tipos
       theme: 'grid',
       headStyles: { fillColor: [40, 167, 69] },
