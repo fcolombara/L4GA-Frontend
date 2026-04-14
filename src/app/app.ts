@@ -15,7 +15,7 @@ import { filter } from 'rxjs/operators';
       <div class="container-fluid px-4">
         
         <a class="navbar-brand d-flex align-items-center" routerLink="/dashboard">
-      <img src="/assets/By_L4GA.png"
+      <img src="/assets/Logis_logo.png"
      alt="L4GA"
      style="height: 40px; width: auto;"
      class="d-inline-block align-text-top me-2">
